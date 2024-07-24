@@ -2,7 +2,10 @@ class AwsSessionManagerPlugin < Formula
   desc "Official Amazon AWS session manager plugin"
   homepage "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"
   version "1.2.463.0"
-
+  livecheck do
+    url "https://docs.aws.amazon.com/systems-manager/latest/userguide/plugin-version-history.html"
+    regex(%r{<td tabindex="-1">(\d+(?:\.\d+)+)</td>}i)
+  end
   if OS.mac?
     if Hardware::CPU.arm?
       url "https://s3.amazonaws.com/session-manager-downloads/plugin/#{version}/mac_arm64/sessionmanager-bundle.zip"
