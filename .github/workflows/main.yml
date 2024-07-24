@@ -1,0 +1,29 @@
+name: Bump formulae on schedule or request
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/autobump.yml
+  workflow_dispatch:
+    inputs:
+      formulae:
+        description: Custom list of formulae to livecheck and bump if outdated
+        required: false
+  schedule:
+    # Every 3 hours with an offset of 15 minutes
+    - cron: "15 */3 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  autobump:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Update Homebrew formula
+      uses: dawidd6/action-homebrew-bump-formula@v3
+      with:
+        token: ${{secrets.HOMEBREW_TOKEN}}
+        livecheck: true
