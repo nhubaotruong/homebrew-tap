@@ -8,8 +8,6 @@ class AwsSessionManagerPlugin < Formula
       regex(%r{<td tabindex="-1">(\d+(?:\.\d+)+)</td>}i)
     end
 
-    depends_on :linux
-    
     url "https://s3.amazonaws.com/session-manager-downloads/plugin/1.2.650.0/ubuntu_64bit/session-manager-plugin.deb"
     sha256 "16b3aac73cfbc134bc008b5388fb3f9f7f45c8e9af4f9eeb6585a611f75a3dd6"
     
@@ -21,6 +19,7 @@ class AwsSessionManagerPlugin < Formula
     end
 
     depends_on "awscli"
+    depends_on :linux
 
     test do
         system bin/"session-manager-plugin"

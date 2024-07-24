@@ -27,12 +27,12 @@ class AndroidPlatformTools < Formula
     end
 
     test do
-        system bin/"platform-tools/adb"
-        system bin/"platform-tools/etc1tool"
-        system bin/"platform-tools/fastboot"
-        system bin/"platform-tools/hprof-conv"
-        system bin/"platform-tools/make_f2fs"
-        system bin/"platform-tools/make_f2fs_casefold"
-        system bin/"platform-tools/mke2fs"
+        system bin/"adb"
+        system bin/"etc1tool"
+        system bin/"fastboot"
+        system bin/"hprof-conv"
+        system bin/"make_f2fs"
+        system bin/"make_f2fs_casefold"
+        system bin/"mke2fs"
     end
 end
