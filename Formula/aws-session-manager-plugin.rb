@@ -5,7 +5,7 @@ class AwsSessionManagerPlugin < Formula
     homepage "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"
     version "1.2.463.0"
     livecheck do
-      url :stable
+      url "https://docs.aws.amazon.com/systems-manager/latest/userguide/plugin-version-history.html"
       regex(%r{<td tabindex="-1">(\d+(?:\.\d+)+)</td>}i)
     end
 
