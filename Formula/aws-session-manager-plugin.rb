@@ -14,8 +14,10 @@ class AwsSessionManagerPlugin < Formula
     sha256 "16b3aac73cfbc134bc008b5388fb3f9f7f45c8e9af4f9eeb6585a611f75a3dd6"
     
     def install
-      bin.install "bin/session-manager-plugin"
-      prefix.install %w[LICENSE VERSION]
+        system "ar", "x", "session-manager-plugin.deb"
+        system "tar", "xf", "data.tar.gz"
+        bin.install "usr/local/sessionmanagerplugin/bin/session-manager-plugin"
+        prefix.install_metafiles
     end
 
     depends_on "awscli"
