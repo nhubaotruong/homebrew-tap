@@ -1,6 +1,6 @@
 # typed: true
 # frozen_string_literal: true
-class AwsSessionManagerPlugin < Formula
+class AndroidPlatformTools < Formula
     name "Android SDK Platform-Tools"
     desc "Android SDK component"
     homepage "https://developer.android.com/tools/releases/platform-tools"
