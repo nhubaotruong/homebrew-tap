@@ -14,24 +14,23 @@ class AndroidPlatformTools < Formula
     sha256 "823d270be01444828ccd09e94209ff394fb8a8457243e1c15689fe0544acbc72"
     
     def install
-        system "unzip", "#{buildpath}/platform-tools_r35.0.1-linux.zip"
-        bin.install "platform-tools/adb"
-        bin.install "platform-tools/etc1tool"
-        bin.install "platform-tools/fastboot"
-        bin.install "platform-tools/hprof-conv"
-        bin.install "platform-tools/make_f2fs"
-        bin.install "platform-tools/make_f2fs_casefold"
-        bin.install "platform-tools/mke2fs"
+        bin.install "adb"
+        bin.install "etc1tool"
+        bin.install "fastboot"
+        bin.install "hprof-conv"
+        bin.install "make_f2fs"
+        bin.install "make_f2fs_casefold"
+        bin.install "mke2fs"
         prefix.install_metafiles
     end
 
     test do
-        system bin/"platform-tools/adb"
-        system bin/"platform-tools/etc1tool"
-        system bin/"platform-tools/fastboot"
-        system bin/"platform-tools/hprof-conv"
-        system bin/"platform-tools/make_f2fs"
-        system bin/"platform-tools/make_f2fs_casefold"
-        system bin/"platform-tools/mke2fs"
+        system bin/"adb"
+        system bin/"etc1tool"
+        system bin/"fastboot"
+        system bin/"hprof-conv"
+        system bin/"make_f2fs"
+        system bin/"make_f2fs_casefold"
+        system bin/"mke2fs"
     end
 end
