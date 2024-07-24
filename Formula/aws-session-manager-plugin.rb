@@ -10,8 +10,8 @@ class AwsSessionManagerPlugin < Formula
 
     depends_on :linux
     
-    url "https://s3.amazonaws.com/session-manager-downloads/plugin/1.2.463.0/ubuntu_64bit/session-manager-plugin.deb"
-    sha256 "cc58fc31e2239230336b243fa97bd63a7202068dd7ce8470eaf654c1928c10a8"
+    url "https://s3.amazonaws.com/session-manager-downloads/plugin/1.2.650.0/ubuntu_64bit/session-manager-plugin.deb"
+    sha256 "16b3aac73cfbc134bc008b5388fb3f9f7f45c8e9af4f9eeb6585a611f75a3dd6"
     
     def install
       bin.install "bin/session-manager-plugin"
