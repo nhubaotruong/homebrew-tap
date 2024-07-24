@@ -11,10 +11,10 @@ class AndroidPlatformTools < Formula
     depends_on :linux
     
     url "https://dl.google.com/android/repository/platform-tools_r35.0.1-linux.zip"
-    sha256 "823d270be01444828ccd09e94209ff394fb8a8457243e1c15689fe0544acbc72"
+    sha256 "a5f9573133966f0659cf4dd2f94db2f342ce5c440375124d8fcdfb22d9fef021"
     
     def install
-        system "unzip", "platform-tools_r35.0.1-linux.zip"
+        system "unzip", "#{buildpath}/platform-tools_r35.0.1-linux.zip"
         bin.install "platform-tools/adb"
         bin.install "platform-tools/etc1tool"
         bin.install "platform-tools/fastboot"
