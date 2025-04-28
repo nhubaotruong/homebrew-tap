@@ -8,8 +8,8 @@ class AwsSessionManagerPlugin < Formula
       regex(%r{<td tabindex="-1">(\d+(?:\.\d+)+)</td>}i)
     end
 
-    url "https://s3.amazonaws.com/session-manager-downloads/plugin/1.2.650.0/ubuntu_64bit/session-manager-plugin.deb"
-    sha256 "16b3aac73cfbc134bc008b5388fb3f9f7f45c8e9af4f9eeb6585a611f75a3dd6"
+    url "https://s3.amazonaws.com/session-manager-downloads/plugin/1.2.707.0/ubuntu_64bit/session-manager-plugin.deb"
+    sha256 "91cc9a1a8df6f730622d5e11a8610be6e06d5858408e8029b56d0d63aedd0a68"
     
     def install
         system "ar", "x", "session-manager-plugin.deb"
