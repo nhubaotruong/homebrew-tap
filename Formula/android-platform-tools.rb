@@ -10,8 +10,8 @@ class AndroidPlatformTools < Formula
 
     depends_on :linux
     
-    url "https://dl.google.com/android/repository/platform-tools_r35.0.2-linux.zip"
-    sha256 "acfdcccb123a8718c46c46c059b2f621140194e5ec1ac9d81715be3d6ab6cd0a"
+    url "https://dl.google.com/android/repository/platform-tools_r36.0.0-linux.zip"
+    sha256 "0ead642c943ffe79701fccca8f5f1c69c4ce4f43df2eefee553f6ccb27cbfbe8"
     
     def install
         bin.install "adb"
