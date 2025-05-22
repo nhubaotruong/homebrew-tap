@@ -28,3 +28,8 @@ jobs:
         token: ${{ secrets.HOMEBREW_TOKEN }}
         tap: ${{ github.repository }}
         livecheck: true
+
+    - name: Delete old workflow runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        retain_days: 14
