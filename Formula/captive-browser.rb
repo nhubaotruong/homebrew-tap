@@ -3,13 +3,8 @@
 class CaptiveBrowser < Formula
   desc "A dedicated Chrome instance to log into captive portals without messing with DNS settings."
   homepage "https://github.com/FiloSottile/captive-browser"
-  # Using specific commit as there are no official releases
-  # Commit: 9c707dc32afc6e4146e19b43a3406329c64b6f3c (from 2017-09-16)
-  url "https://github.com/FiloSottile/captive-browser/archive/9c707dc32afc6e4146e19b43a3406329c64b6f3c.tar.gz"
-  version "0.1.0-git-9c707dc" # Pseudo-version based on commit date and short hash
-
-  sha256 "b28bab5bdec458471e4c98d140cad7e8250f9a5f5db2ca72819dad46a1a314a9"
-
+  # Using go install to fetch the binary instead of compiling from source
+  version "0.1.0"
   license "MIT"
 
   livecheck do
@@ -17,17 +12,12 @@ class CaptiveBrowser < Formula
     strategy :github_latest
   end
 
-  # HEAD build is useful if users want the absolute latest from main
-  head "https://github.com/FiloSottile/captive-browser.git", branch: "main"
-
   depends_on "go" => :build
 
   def install
-    # Build the captive-browser binary
-    ENV["CGO_ENABLED"] = "0"
-    ENV["GO111MODULE"] = "auto"
-    system "go", "build", "-ldflags", "-s -w -buildid=", "-trimpath", "-o", "captive-browser", "."
-    bin.install "captive-browser"
+    # Install static binary using go get
+    ENV["GOBIN"] = bin
+    system "go", "install", "github.com/FiloSottile/captive-browser@latest"
 
     # Install OS-specific example configuration files to pkgshare
     if OS.mac?
