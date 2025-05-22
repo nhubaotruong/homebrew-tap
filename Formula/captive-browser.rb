@@ -25,7 +25,7 @@ class CaptiveBrowser < Formula
   def install
     # Build the captive-browser binary
     ENV["CGO_ENABLED"] = "0"
-    ENV["GO111MODULE"] = "off"
+    ENV["GO111MODULE"] = "auto"
     system "go", "build", "-ldflags", "-s -w -buildid=", "-trimpath", "-o", "captive-browser", "."
     bin.install "captive-browser"
 
