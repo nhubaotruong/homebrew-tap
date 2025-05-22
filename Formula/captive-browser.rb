@@ -8,7 +8,7 @@ class CaptiveBrowser < Formula
   url "https://github.com/FiloSottile/captive-browser/archive/9c707dc32afc6e4146e19b43a3406329c64b6f3c.tar.gz"
   version "0.1.0-git-9c707dc" # Pseudo-version based on commit date and short hash
 
-  sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  sha256 "b28bab5bdec458471e4c98d140cad7e8250f9a5f5db2ca72819dad46a1a314a9"
 
   license "MIT"
 
