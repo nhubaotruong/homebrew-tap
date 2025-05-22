@@ -3,6 +3,7 @@
 class CaptiveBrowser < Formula
   desc "A dedicated Chrome instance to log into captive portals without messing with DNS settings."
   homepage "https://github.com/FiloSottile/captive-browser"
+  url "https://github.com/FiloSottile/captive-browser"
   # Using go install to fetch the binary instead of compiling from source
   version "0.1.0"
   license "MIT"
