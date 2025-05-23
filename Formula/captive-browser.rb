@@ -9,10 +9,10 @@ class CaptiveBrowser < Formula
   version "0.1.0"
   license "MIT"
 
-  livecheck do
-    url :stable
-    strategy :github_latest
-  end
+  # livecheck do
+  #   url :stable
+  #   strategy :github_latest
+  # end
 
   depends_on "go" => :build
 
