@@ -17,13 +17,8 @@ class DockerCredentialHelperGhcrLogin < Formula
   depends_on "go" => :build
 
   def install
-    ldflags = %W[
-      -s
-      -w
-      -buildid=
-    ]
     system "go", "build", "-trimpath",
-           "-ldflags", "'#{ldflags.join(" ")}'",
+           "-ldflags", "-s -w -buildid=",
            *std_go_args(output: bin/"docker-credential-ghcr-login")
   end
 
