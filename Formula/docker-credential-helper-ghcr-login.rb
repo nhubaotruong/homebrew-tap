@@ -9,9 +9,8 @@ class DockerCredentialHelperGhcrLogin < Formula
   license "MIT"
 
   livecheck do
-    url :stable
-    strategy :git
-    regex(/^[0-9a-f]{40}$/i)
+    url :homepage
+    strategy :github_latest
   end
 
   depends_on "go" => :build
