@@ -23,7 +23,7 @@ class DockerCredentialHelperGhcr < Formula
       -buildid=
     ]
     system "go", "build", "-trimpath",
-           "-ldflags", ldflags.join(" "),
+           "-ldflags", "'#{ldflags.join(" ")}'",
            *std_go_args(output: bin/"docker-credential-ghcr-login")
   end
 
