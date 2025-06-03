@@ -7,10 +7,10 @@ class DockerCredentialHelperGhcrLogin < Formula
       revision: "ca8ce48f12b6a9cd92e795514db75a2d6d248186"
   version "0.1.0"
   license "MIT"
+  head "https://github.com/bradschwartz/docker-credential-ghcr-login.git", branch: "main"
 
   livecheck do
-    url :homepage
-    strategy :github_latest
+    skip "Formula tracks latest commit SHA from HEAD"
   end
 
   depends_on "go" => :build
