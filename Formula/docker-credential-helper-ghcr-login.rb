@@ -14,6 +14,7 @@ class DockerCredentialHelperGhcrLogin < Formula
   end
 
   depends_on "go" => :build
+  depends_on "gh"
 
   def install
     system "go", "build", "-trimpath",

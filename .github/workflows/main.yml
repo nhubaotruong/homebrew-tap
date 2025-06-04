@@ -30,6 +30,108 @@ jobs:
           tap: ${{ github.repository }}
           livecheck: true
 
+      - name: Update git-tracked formulae
+        env:
+          GITHUB_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+        run: |
+          # Function to get latest commit SHA for a repo
+          get_latest_sha() {
+            local repo=$1
+            local branch=${2:-main}
+            curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/$repo/commits/$branch" | \
+              jq -r '.sha'
+          }
+
+          # Function to calculate SHA256 for a git repository at specific commit
+          calculate_sha256() {
+            local repo=$1
+            local commit=$2
+            local tempdir=$(mktemp -d)
+            pushd "$tempdir" >/dev/null
+            
+            # Clone repository and checkout specific commit
+            git clone --quiet "https://github.com/$repo" repo
+            cd repo
+            git checkout --quiet "$commit"
+            
+            # Create tarball and calculate SHA256
+            git archive --format=tar.gz --prefix="$(basename "$repo")-$commit/" "$commit" | sha256sum | cut -d' ' -f1
+            
+            # Cleanup
+            popd >/dev/null
+            rm -rf "$tempdir"
+          }
+
+          # Configure git
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          # Find all Ruby files in Formula directory
+          find Formula -name "*.rb" -type f | while read formula; do
+            echo "Checking $formula for git source..."
+            
+            # Extract git URL and revision if present
+            if grep -q "git.*revision:" "$formula"; then
+              # Extract the repository URL and revision
+              repo_url=$(grep -A1 'url.*git"' "$formula" | head -n1 | grep -o 'github.com/[^"]*' | head -n1)
+              if [ -n "$repo_url" ]; then
+                repo=${repo_url#github.com/}
+                current_sha=$(grep 'revision:' "$formula" | cut -d'"' -f2)
+                branch=$(grep -A1 'branch:' "$formula" | grep -o '"[^"]*"' | tr -d '"' || echo "main")
+                
+                echo "Found git-tracked formula: $formula"
+                echo "Repository: $repo"
+                echo "Current SHA: $current_sha"
+                echo "Branch: $branch"
+                
+                latest_sha=$(get_latest_sha "$repo" "$branch")
+                
+                if [ "$current_sha" != "$latest_sha" ]; then
+                  echo "Updating $formula from $current_sha to $latest_sha"
+                  
+                  # Calculate new SHA256
+                  echo "Calculating new SHA256..."
+                  new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
+                  
+                  # Create a new branch
+                  formula_name=$(basename "$formula" .rb)
+                  BRANCH="bump-$formula_name-$(date +%Y%m%d)"
+                  git checkout -b "$BRANCH"
+                  
+                  # Update the formula
+                  sed -i "s/revision: \"$current_sha\"/revision: \"$latest_sha\"/" "$formula"
+                  
+                  # Update SHA256 if present
+                  if grep -q "sha256 " "$formula"; then
+                    current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
+                    if [ -n "$current_sha256" ]; then
+                      echo "Updating SHA256 from $current_sha256 to $new_sha256"
+                      sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
+                    fi
+                  fi
+                  
+                  # Commit and push
+                  git add "$formula"
+                  git commit -m "feat($formula_name): update to latest commit $latest_sha"
+                  git push origin "$BRANCH"
+                  
+                  # Create PR
+                  gh pr create \
+                    --title "feat($formula_name): update to latest commit" \
+                    --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
+                    --base master \
+                    --head "$BRANCH"
+                    
+                  # Return to master for next iteration
+                  git checkout master
+                else
+                  echo "$formula is already up to date"
+                fi
+              fi
+            fi
+          done
+
       - name: Delete old workflow runs
         uses: Mattraks/delete-workflow-runs@v2
         with:
