@@ -16,7 +16,8 @@ on:
     - cron: "15 */3 * * *"
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
   actions: write
 
 jobs:
@@ -36,20 +37,34 @@ jobs:
       - name: Update git-tracked formulae
         env:
           GITHUB_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           # Function to get latest commit SHA for a repo
           get_latest_sha() {
             local repo=$1
             local branch=${2:-main}
-            curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/$repo/commits/$branch" | \
-              jq -r '.sha'
+            echo "DEBUG: Getting latest SHA for repo: $repo, branch: $branch" >&2
+            local response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/$repo/commits/$branch")
+            echo "DEBUG: API response: $response" >&2
+            local sha=$(echo "$response" | jq -r '.sha // empty')
+            if [ -z "$sha" ] || [ "$sha" = "null" ]; then
+              echo "ERROR: Failed to get SHA for $repo/$branch" >&2
+              echo "ERROR: API response: $response" >&2
+              return 1
+            fi
+            echo "$sha"
           }
 
           # Function to calculate SHA256 for a git repository at specific commit
           calculate_sha256() {
             local repo=$1
             local commit=$2
+            echo "DEBUG: Calculating SHA256 for repo: $repo, commit: $commit" >&2
+            if [ -z "$commit" ]; then
+              echo "ERROR: Empty commit SHA provided to calculate_sha256" >&2
+              return 1
+            fi
             local tempdir=$(mktemp -d)
             pushd "$tempdir" >/dev/null
             
@@ -69,6 +84,9 @@ jobs:
           # Configure git
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          
+          # Configure git credentials for pushing
+          git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
 
           # Find all Ruby files in Formula directory
           find Formula -name "*.rb" -type f | while read formula; do
@@ -80,13 +98,24 @@ jobs:
               repo_url=$(grep 'url.*git' "$formula" | grep -o 'github.com/[^"]*' | head -n1)
               if [ -n "$repo_url" ]; then
                 repo=${repo_url#github.com/}
-                branch=$(grep -A1 'branch:' "$formula" | grep -o '"[^"]*"' | tr -d '"' || echo "main")
+                # Remove .git suffix if present
+                repo=${repo%.git}
+                
+                # Extract branch name - look for branch: "name" pattern
+                branch=$(grep 'branch:' "$formula" | grep -o '"[^"]*"' | tr -d '"' | head -n1)
+                if [ -z "$branch" ]; then
+                  branch="main"
+                fi
                 
                 echo "Found git-tracked formula: $formula"
                 echo "Repository: $repo"
                 echo "Branch: $branch"
                 
                 latest_sha=$(get_latest_sha "$repo" "$branch")
+                if [ $? -ne 0 ]; then
+                  echo "ERROR: Failed to get latest SHA for $repo/$branch, skipping..."
+                  continue
+                fi
                 
                 # Check if formula uses revision field
                 if grep -q 'revision:' "$formula"; then
@@ -99,6 +128,10 @@ jobs:
                     # Calculate new SHA256 for tarball
                     echo "Calculating new SHA256..."
                     new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
+                    if [ $? -ne 0 ] || [ -z "$new_sha256" ]; then
+                      echo "ERROR: Failed to calculate SHA256 for $repo/$latest_sha, skipping..."
+                      continue
+                    fi
                     
                     # Create a new branch
                     formula_name=$(basename "$formula" .rb)
@@ -143,6 +176,10 @@ jobs:
                   # Calculate SHA256 for latest commit
                   echo "Calculating SHA256 for latest commit..."
                   new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
+                  if [ $? -ne 0 ] || [ -z "$new_sha256" ]; then
+                    echo "ERROR: Failed to calculate SHA256 for $repo/$latest_sha, skipping..."
+                    continue
+                  fi
                   
                   if [ "$current_sha256" != "$new_sha256" ]; then
                     echo "Updating $formula SHA256 from $current_sha256 to $new_sha256 (latest commit: $latest_sha)"
