@@ -31,190 +31,190 @@ jobs:
           tap: ${{ github.repository }}
           livecheck: true
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # - name: Checkout repository
+      #   uses: actions/checkout@v4
 
-      - name: Update git-tracked formulae
-        env:
-          GITHUB_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          # Function to get latest commit SHA for a repo
-          get_latest_sha() {
-            local repo=$1
-            local branch=${2:-main}
-            echo "DEBUG: Getting latest SHA for repo: $repo, branch: $branch" >&2
-            local response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/$repo/commits/$branch")
-            echo "DEBUG: API response: $response" >&2
-            local sha=$(echo "$response" | jq -r '.sha // empty')
-            if [ -z "$sha" ] || [ "$sha" = "null" ]; then
-              echo "ERROR: Failed to get SHA for $repo/$branch" >&2
-              echo "ERROR: API response: $response" >&2
-              return 1
-            fi
-            echo "$sha"
-          }
+      # - name: Update git-tracked formulae
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+      #     GITHUB_REPOSITORY: ${{ github.repository }}
+      #   run: |
+      #     # Function to get latest commit SHA for a repo
+      #     get_latest_sha() {
+      #       local repo=$1
+      #       local branch=${2:-main}
+      #       echo "DEBUG: Getting latest SHA for repo: $repo, branch: $branch" >&2
+      #       local response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+      #         "https://api.github.com/repos/$repo/commits/$branch")
+      #       echo "DEBUG: API response: $response" >&2
+      #       local sha=$(echo "$response" | jq -r '.sha // empty')
+      #       if [ -z "$sha" ] || [ "$sha" = "null" ]; then
+      #         echo "ERROR: Failed to get SHA for $repo/$branch" >&2
+      #         echo "ERROR: API response: $response" >&2
+      #         return 1
+      #       fi
+      #       echo "$sha"
+      #     }
 
-          # Function to calculate SHA256 for a git repository at specific commit
-          calculate_sha256() {
-            local repo=$1
-            local commit=$2
-            echo "DEBUG: Calculating SHA256 for repo: $repo, commit: $commit" >&2
-            if [ -z "$commit" ]; then
-              echo "ERROR: Empty commit SHA provided to calculate_sha256" >&2
-              return 1
-            fi
-            local tempdir=$(mktemp -d)
-            pushd "$tempdir" >/dev/null
+      #     # Function to calculate SHA256 for a git repository at specific commit
+      #     calculate_sha256() {
+      #       local repo=$1
+      #       local commit=$2
+      #       echo "DEBUG: Calculating SHA256 for repo: $repo, commit: $commit" >&2
+      #       if [ -z "$commit" ]; then
+      #         echo "ERROR: Empty commit SHA provided to calculate_sha256" >&2
+      #         return 1
+      #       fi
+      #       local tempdir=$(mktemp -d)
+      #       pushd "$tempdir" >/dev/null
             
-            # Clone repository and checkout specific commit
-            git clone --quiet "https://github.com/$repo" repo
-            cd repo
-            git checkout --quiet "$commit"
+      #       # Clone repository and checkout specific commit
+      #       git clone --quiet "https://github.com/$repo" repo
+      #       cd repo
+      #       git checkout --quiet "$commit"
             
-            # Create tarball and calculate SHA256
-            git archive --format=tar.gz --prefix="$(basename "$repo")-$commit/" "$commit" | sha256sum | cut -d' ' -f1
+      #       # Create tarball and calculate SHA256
+      #       git archive --format=tar.gz --prefix="$(basename "$repo")-$commit/" "$commit" | sha256sum | cut -d' ' -f1
             
-            # Cleanup
-            popd >/dev/null
-            rm -rf "$tempdir"
-          }
+      #       # Cleanup
+      #       popd >/dev/null
+      #       rm -rf "$tempdir"
+      #     }
 
-          # Configure git
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+      #     # Configure git
+      #     git config --global user.name "GitHub Actions"
+      #     git config --global user.email "actions@github.com"
           
-          # Configure git credentials for pushing
-          git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+      #     # Configure git credentials for pushing
+      #     git remote set-url origin "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
 
-          # Find all Ruby files in Formula directory
-          find Formula -name "*.rb" -type f | while read formula; do
-            echo "Checking $formula for git source..."
+      #     # Find all Ruby files in Formula directory
+      #     find Formula -name "*.rb" -type f | while read formula; do
+      #       echo "Checking $formula for git source..."
             
-            # Check if this is a git-based formula (has git URL)
-            if grep -q 'url.*git' "$formula"; then
-              # Extract the repository URL
-              repo_url=$(grep 'url.*git' "$formula" | grep -o 'github.com/[^"]*' | head -n1)
-              if [ -n "$repo_url" ]; then
-                repo=${repo_url#github.com/}
-                # Remove .git suffix if present
-                repo=${repo%.git}
+      #       # Check if this is a git-based formula (has git URL)
+      #       if grep -q 'url.*git' "$formula"; then
+      #         # Extract the repository URL
+      #         repo_url=$(grep 'url.*git' "$formula" | grep -o 'github.com/[^"]*' | head -n1)
+      #         if [ -n "$repo_url" ]; then
+      #           repo=${repo_url#github.com/}
+      #           # Remove .git suffix if present
+      #           repo=${repo%.git}
                 
-                # Extract branch name - look for branch: "name" pattern
-                branch=$(grep 'branch:' "$formula" | grep -o '"[^"]*"' | tr -d '"' | head -n1)
-                if [ -z "$branch" ]; then
-                  branch="main"
-                fi
+      #           # Extract branch name - look for branch: "name" pattern
+      #           branch=$(grep 'branch:' "$formula" | grep -o '"[^"]*"' | tr -d '"' | head -n1)
+      #           if [ -z "$branch" ]; then
+      #             branch="main"
+      #           fi
                 
-                echo "Found git-tracked formula: $formula"
-                echo "Repository: $repo"
-                echo "Branch: $branch"
+      #           echo "Found git-tracked formula: $formula"
+      #           echo "Repository: $repo"
+      #           echo "Branch: $branch"
                 
-                latest_sha=$(get_latest_sha "$repo" "$branch")
-                if [ $? -ne 0 ]; then
-                  echo "ERROR: Failed to get latest SHA for $repo/$branch, skipping..."
-                  continue
-                fi
+      #           latest_sha=$(get_latest_sha "$repo" "$branch")
+      #           if [ $? -ne 0 ]; then
+      #             echo "ERROR: Failed to get latest SHA for $repo/$branch, skipping..."
+      #             continue
+      #           fi
                 
-                # Check if formula uses revision field
-                if grep -q 'revision:' "$formula"; then
-                  current_sha=$(grep 'revision:' "$formula" | cut -d'"' -f2)
-                  echo "Current revision SHA: $current_sha"
+      #           # Check if formula uses revision field
+      #           if grep -q 'revision:' "$formula"; then
+      #             current_sha=$(grep 'revision:' "$formula" | cut -d'"' -f2)
+      #             echo "Current revision SHA: $current_sha"
                   
-                  if [ "$current_sha" != "$latest_sha" ]; then
-                    echo "Updating $formula revision from $current_sha to $latest_sha"
+      #             if [ "$current_sha" != "$latest_sha" ]; then
+      #               echo "Updating $formula revision from $current_sha to $latest_sha"
                     
-                    # Calculate new SHA256 for tarball
-                    echo "Calculating new SHA256..."
-                    new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
-                    if [ $? -ne 0 ] || [ -z "$new_sha256" ]; then
-                      echo "ERROR: Failed to calculate SHA256 for $repo/$latest_sha, skipping..."
-                      continue
-                    fi
+      #               # Calculate new SHA256 for tarball
+      #               echo "Calculating new SHA256..."
+      #               new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
+      #               if [ $? -ne 0 ] || [ -z "$new_sha256" ]; then
+      #                 echo "ERROR: Failed to calculate SHA256 for $repo/$latest_sha, skipping..."
+      #                 continue
+      #               fi
                     
-                    # Create a new branch
-                    formula_name=$(basename "$formula" .rb)
-                    BRANCH="bump-$formula_name-$(date +%Y%m%d%H%M)"
-                    git checkout -b "$BRANCH"
+      #               # Create a new branch
+      #               formula_name=$(basename "$formula" .rb)
+      #               BRANCH="bump-$formula_name-$(date +%Y%m%d%H%M)"
+      #               git checkout -b "$BRANCH"
                     
-                    # Update the revision
-                    sed -i "s/revision: \"$current_sha\"/revision: \"$latest_sha\"/" "$formula"
+      #               # Update the revision
+      #               sed -i "s/revision: \"$current_sha\"/revision: \"$latest_sha\"/" "$formula"
                     
-                    # Update SHA256 if present
-                    if grep -q "sha256 " "$formula"; then
-                      current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
-                      if [ -n "$current_sha256" ]; then
-                        echo "Updating SHA256 from $current_sha256 to $new_sha256"
-                        sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
-                      fi
-                    fi
+      #               # Update SHA256 if present
+      #               if grep -q "sha256 " "$formula"; then
+      #                 current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
+      #                 if [ -n "$current_sha256" ]; then
+      #                   echo "Updating SHA256 from $current_sha256 to $new_sha256"
+      #                   sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
+      #                 fi
+      #               fi
                     
-                    # Commit and push
-                    git add "$formula"
-                    git commit -m "feat($formula_name): update to latest commit $latest_sha"
-                    git push origin "$BRANCH"
+      #               # Commit and push
+      #               git add "$formula"
+      #               git commit -m "feat($formula_name): update to latest commit $latest_sha"
+      #               git push origin "$BRANCH"
                     
-                    # Create PR
-                    gh pr create \
-                      --title "feat($formula_name): update to latest commit" \
-                      --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
-                      --base master \
-                      --head "$BRANCH"
+      #               # Create PR
+      #               gh pr create \
+      #                 --title "feat($formula_name): update to latest commit" \
+      #                 --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
+      #                 --base master \
+      #                 --head "$BRANCH"
                       
-                    # Return to master for next iteration
-                    git checkout master
-                  else
-                    echo "$formula revision is already up to date"
-                  fi
+      #               # Return to master for next iteration
+      #               git checkout master
+      #             else
+      #               echo "$formula revision is already up to date"
+      #             fi
                   
-                # Check if formula uses sha256 field only (no revision)
-                elif grep -q "sha256 " "$formula"; then
-                  current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
-                  echo "Current SHA256: $current_sha256"
+      #           # Check if formula uses sha256 field only (no revision)
+      #           elif grep -q "sha256 " "$formula"; then
+      #             current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
+      #             echo "Current SHA256: $current_sha256"
                   
-                  # Calculate SHA256 for latest commit
-                  echo "Calculating SHA256 for latest commit..."
-                  new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
-                  if [ $? -ne 0 ] || [ -z "$new_sha256" ]; then
-                    echo "ERROR: Failed to calculate SHA256 for $repo/$latest_sha, skipping..."
-                    continue
-                  fi
+      #             # Calculate SHA256 for latest commit
+      #             echo "Calculating SHA256 for latest commit..."
+      #             new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
+      #             if [ $? -ne 0 ] || [ -z "$new_sha256" ]; then
+      #               echo "ERROR: Failed to calculate SHA256 for $repo/$latest_sha, skipping..."
+      #               continue
+      #             fi
                   
-                  if [ "$current_sha256" != "$new_sha256" ]; then
-                    echo "Updating $formula SHA256 from $current_sha256 to $new_sha256 (latest commit: $latest_sha)"
+      #             if [ "$current_sha256" != "$new_sha256" ]; then
+      #               echo "Updating $formula SHA256 from $current_sha256 to $new_sha256 (latest commit: $latest_sha)"
                     
-                    # Create a new branch
-                    formula_name=$(basename "$formula" .rb)
-                    BRANCH="bump-$formula_name-$(date +%Y%m%d%H%M)"
-                    git checkout -b "$BRANCH"
+      #               # Create a new branch
+      #               formula_name=$(basename "$formula" .rb)
+      #               BRANCH="bump-$formula_name-$(date +%Y%m%d%H%M)"
+      #               git checkout -b "$BRANCH"
                     
-                    # Update the SHA256
-                    sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
+      #               # Update the SHA256
+      #               sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
                     
-                    # Commit and push
-                    git add "$formula"
-                    git commit -m "feat($formula_name): update to latest commit $latest_sha"
-                    git push origin "$BRANCH"
+      #               # Commit and push
+      #               git add "$formula"
+      #               git commit -m "feat($formula_name): update to latest commit $latest_sha"
+      #               git push origin "$BRANCH"
                     
-                    # Create PR
-                    gh pr create \
-                      --title "feat($formula_name): update to latest commit" \
-                      --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
-                      --base master \
-                      --head "$BRANCH"
+      #               # Create PR
+      #               gh pr create \
+      #                 --title "feat($formula_name): update to latest commit" \
+      #                 --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
+      #                 --base master \
+      #                 --head "$BRANCH"
                       
-                    # Return to master for next iteration
-                    git checkout master
-                  else
-                    echo "$formula SHA256 is already up to date"
-                  fi
-                else
-                  echo "Skipping $formula: no revision or sha256 field found"
-                fi
-              fi
-            fi
-          done
+      #               # Return to master for next iteration
+      #               git checkout master
+      #             else
+      #               echo "$formula SHA256 is already up to date"
+      #             fi
+      #           else
+      #             echo "Skipping $formula: no revision or sha256 field found"
+      #           fi
+      #         fi
+      #       fi
+      #     done
 
       - name: Delete old workflow runs
         uses: Mattraks/delete-workflow-runs@v2
