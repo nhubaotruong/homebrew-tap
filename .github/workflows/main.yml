@@ -74,62 +74,106 @@ jobs:
           find Formula -name "*.rb" -type f | while read formula; do
             echo "Checking $formula for git source..."
             
-            # Extract git URL and revision if present
-            if grep -q "git.*revision:" "$formula"; then
-              # Extract the repository URL and revision
-              repo_url=$(grep -A1 'url.*git"' "$formula" | head -n1 | grep -o 'github.com/[^"]*' | head -n1)
+            # Check if this is a git-based formula (has git URL)
+            if grep -q 'url.*git' "$formula"; then
+              # Extract the repository URL
+              repo_url=$(grep 'url.*git' "$formula" | grep -o 'github.com/[^"]*' | head -n1)
               if [ -n "$repo_url" ]; then
                 repo=${repo_url#github.com/}
-                current_sha=$(grep 'revision:' "$formula" | cut -d'"' -f2)
                 branch=$(grep -A1 'branch:' "$formula" | grep -o '"[^"]*"' | tr -d '"' || echo "main")
                 
                 echo "Found git-tracked formula: $formula"
                 echo "Repository: $repo"
-                echo "Current SHA: $current_sha"
                 echo "Branch: $branch"
                 
                 latest_sha=$(get_latest_sha "$repo" "$branch")
                 
-                if [ "$current_sha" != "$latest_sha" ]; then
-                  echo "Updating $formula from $current_sha to $latest_sha"
+                # Check if formula uses revision field
+                if grep -q 'revision:' "$formula"; then
+                  current_sha=$(grep 'revision:' "$formula" | cut -d'"' -f2)
+                  echo "Current revision SHA: $current_sha"
                   
-                  # Calculate new SHA256
-                  echo "Calculating new SHA256..."
-                  new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
-                  
-                  # Create a new branch
-                  formula_name=$(basename "$formula" .rb)
-                  BRANCH="bump-$formula_name-$(date +%Y%m%d)"
-                  git checkout -b "$BRANCH"
-                  
-                  # Update the formula
-                  sed -i "s/revision: \"$current_sha\"/revision: \"$latest_sha\"/" "$formula"
-                  
-                  # Update SHA256 if present
-                  if grep -q "sha256 " "$formula"; then
-                    current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
-                    if [ -n "$current_sha256" ]; then
-                      echo "Updating SHA256 from $current_sha256 to $new_sha256"
-                      sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
+                  if [ "$current_sha" != "$latest_sha" ]; then
+                    echo "Updating $formula revision from $current_sha to $latest_sha"
+                    
+                    # Calculate new SHA256 for tarball
+                    echo "Calculating new SHA256..."
+                    new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
+                    
+                    # Create a new branch
+                    formula_name=$(basename "$formula" .rb)
+                    BRANCH="bump-$formula_name-$(date +%Y%m%d%H%M)"
+                    git checkout -b "$BRANCH"
+                    
+                    # Update the revision
+                    sed -i "s/revision: \"$current_sha\"/revision: \"$latest_sha\"/" "$formula"
+                    
+                    # Update SHA256 if present
+                    if grep -q "sha256 " "$formula"; then
+                      current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
+                      if [ -n "$current_sha256" ]; then
+                        echo "Updating SHA256 from $current_sha256 to $new_sha256"
+                        sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
+                      fi
                     fi
+                    
+                    # Commit and push
+                    git add "$formula"
+                    git commit -m "feat($formula_name): update to latest commit $latest_sha"
+                    git push origin "$BRANCH"
+                    
+                    # Create PR
+                    gh pr create \
+                      --title "feat($formula_name): update to latest commit" \
+                      --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
+                      --base master \
+                      --head "$BRANCH"
+                      
+                    # Return to master for next iteration
+                    git checkout master
+                  else
+                    echo "$formula revision is already up to date"
                   fi
                   
-                  # Commit and push
-                  git add "$formula"
-                  git commit -m "feat($formula_name): update to latest commit $latest_sha"
-                  git push origin "$BRANCH"
+                # Check if formula uses sha256 field only (no revision)
+                elif grep -q "sha256 " "$formula"; then
+                  current_sha256=$(grep 'sha256 ' "$formula" | cut -d'"' -f2)
+                  echo "Current SHA256: $current_sha256"
                   
-                  # Create PR
-                  gh pr create \
-                    --title "feat($formula_name): update to latest commit" \
-                    --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
-                    --base master \
-                    --head "$BRANCH"
+                  # Calculate SHA256 for latest commit
+                  echo "Calculating SHA256 for latest commit..."
+                  new_sha256=$(calculate_sha256 "$repo" "$latest_sha")
+                  
+                  if [ "$current_sha256" != "$new_sha256" ]; then
+                    echo "Updating $formula SHA256 from $current_sha256 to $new_sha256 (latest commit: $latest_sha)"
                     
-                  # Return to master for next iteration
-                  git checkout master
+                    # Create a new branch
+                    formula_name=$(basename "$formula" .rb)
+                    BRANCH="bump-$formula_name-$(date +%Y%m%d%H%M)"
+                    git checkout -b "$BRANCH"
+                    
+                    # Update the SHA256
+                    sed -i "s/sha256 \"$current_sha256\"/sha256 \"$new_sha256\"/" "$formula"
+                    
+                    # Commit and push
+                    git add "$formula"
+                    git commit -m "feat($formula_name): update to latest commit $latest_sha"
+                    git push origin "$BRANCH"
+                    
+                    # Create PR
+                    gh pr create \
+                      --title "feat($formula_name): update to latest commit" \
+                      --body "Updates $repo to latest commit $latest_sha with SHA256 $new_sha256" \
+                      --base master \
+                      --head "$BRANCH"
+                      
+                    # Return to master for next iteration
+                    git checkout master
+                  else
+                    echo "$formula SHA256 is already up to date"
+                  fi
                 else
-                  echo "$formula is already up to date"
+                  echo "Skipping $formula: no revision or sha256 field found"
                 fi
               fi
             fi
