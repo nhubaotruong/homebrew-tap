@@ -30,6 +30,9 @@ jobs:
           tap: ${{ github.repository }}
           livecheck: true
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Update git-tracked formulae
         env:
           GITHUB_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
