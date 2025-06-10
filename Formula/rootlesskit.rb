@@ -16,12 +16,13 @@ class Rootlesskit < Formula
   end
 
   on_linux do
+    current_version = version
     # Use different resource names to avoid confusion with the main url
     # Fetch the SHA256 sums from the release page for the binaries
     # You'll need to manually update these SHAs to match the latest release
     on_intel do
       resource "rootlesskit-x86_64" do
-        url "https://github.com/rootless-containers/rootlesskit/releases/download/v#{formula.version}/rootlesskit-x86_64.tar.gz"
+        url "https://github.com/rootless-containers/rootlesskit/releases/download/v#{current_version}/rootlesskit-x86_64.tar.gz"
         # IMPORTANT: Replace with the actual SHA256 for rootlesskit-x86_64.tar.gz for v2.3.5
         sha256 "1c28b7e0170a442e97d195f269a888c3f4a5f82490b42d627c2e9b04f7678c77"
       end
@@ -29,7 +30,7 @@ class Rootlesskit < Formula
 
     on_arm do
       resource "rootlesskit-aarch64" do
-        url "https://github.com/rootless-containers/rootlesskit/releases/download/v#{formula.version}/rootlesskit-aarch64.tar.gz"
+        url "https://github.com/rootless-containers/rootlesskit/releases/download/v#{current_version}/rootlesskit-aarch64.tar.gz"
         # IMPORTANT: Replace with the actual SHA256 for rootlesskit-aarch64.tar.gz for v2.3.5
         sha256 "1724d2715ff2886f4a2fb74a001a1820614562507851b4395679e95964893792"
       end
