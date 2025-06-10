@@ -8,11 +8,11 @@ class Rootlesskit < Formula
       tag:      "v2.3.5",
       revision: "0cc0811acc6e4daee71817383e62fb811590bc13"
   license "Apache-2.0"
-  version "2.3.5"
 
   livecheck do
     url :stable
-    strategy :github_releases
+    strategy :git
+    regex(/^v(\d+(?:\.\d+)+)$/i)
   end
 
   on_linux do
