@@ -4,9 +4,8 @@
 class Rootlesskit < Formula
   desc "Linux-native \"fake root\" for implementing rootless containers"
   homepage "https://github.com/rootless-containers/rootlesskit"
-  # Use url directly here, and let livecheck handle the version
   url "https://github.com/rootless-containers/rootlesskit/archive/refs/tags/v2.3.5.tar.gz"
-  sha256 "0f242502f5a5ae52723c34e857418928c0570b2c1514757c2a7924c7f07a16f2" # SHA256 of the v2.3.5 source tarball
+  sha256 "373d60ff50b56a35a4975a574aad465bd8d17af4302cbc3aa643d664018eddbd"
   license "Apache-2.0"
   version "2.3.5"
 
@@ -23,16 +22,14 @@ class Rootlesskit < Formula
     on_intel do
       resource "rootlesskit-x86_64" do
         url "https://github.com/rootless-containers/rootlesskit/releases/download/v#{current_version}/rootlesskit-x86_64.tar.gz"
-        # IMPORTANT: Replace with the actual SHA256 for rootlesskit-x86_64.tar.gz for v2.3.5
-        sha256 "1c28b7e0170a442e97d195f269a888c3f4a5f82490b42d627c2e9b04f7678c77"
+        sha256 "118208e25becd144ee7317c172fc9decce7b16174d5c1bbf80f1d1d0eacc6b5f"
       end
     end
 
     on_arm do
       resource "rootlesskit-aarch64" do
         url "https://github.com/rootless-containers/rootlesskit/releases/download/v#{current_version}/rootlesskit-aarch64.tar.gz"
-        # IMPORTANT: Replace with the actual SHA256 for rootlesskit-aarch64.tar.gz for v2.3.5
-        sha256 "1724d2715ff2886f4a2fb74a001a1820614562507851b4395679e95964893792"
+        sha256 "478c14c3195bf989cd9a8e6bd129d227d5d88f1c11418967ffdc84a0072cc7a2"
       end
     end
 
