@@ -4,6 +4,9 @@
 class Rootlesskit < Formula
   desc "Linux-native \"fake root\" for implementing rootless containers"
   homepage "https://github.com/rootless-containers/rootlesskit"
+  url "https://github.com/rootless-containers/rootlesskit.git",
+      tag:      "v2.3.5",
+      revision: "0cc0811acc6e4daee71817383e62fb811590bc13"
   license "Apache-2.0"
   version "2.3.5"
 
