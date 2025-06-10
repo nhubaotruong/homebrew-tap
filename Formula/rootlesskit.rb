@@ -8,7 +8,7 @@ class Rootlesskit < Formula
   url "https://github.com/rootless-containers/rootlesskit/archive/refs/tags/v2.3.5.tar.gz"
   sha256 "0f242502f5a5ae52723c34e857418928c0570b2c1514757c2a7924c7f07a16f2" # SHA256 of the v2.3.5 source tarball
   license "Apache-2.0"
-  head "https://github.com/rootless-containers/rootlesskit.git", branch: "main"
+  version "2.3.5"
 
   livecheck do
     url :stable
