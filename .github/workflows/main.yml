@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Update Homebrew formula
-        uses: dawidd6/action-homebrew-bump-formula@v4
+        uses: dawidd6/action-homebrew-bump-formula@v5
         with:
           token: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
           tap: ${{ github.repository }}
