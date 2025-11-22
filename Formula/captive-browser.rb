@@ -1,13 +1,13 @@
 # typed: true
 # frozen_string_literal: true
+
 class CaptiveBrowser < Formula
-  desc "A dedicated Chrome instance to log into captive portals without messing with DNS settings."
+  desc "Dedicated Chrome instance to log into captive portals without messing DNS settings"
   homepage "https://github.com/FiloSottile/captive-browser"
-  url "https://github.com/FiloSottile/captive-browser"
-  sha256 "201374fcc1bc2d5b54930f6cd0ae4eb4bce8f75ad9bcb853e849f1fa899dda66"
-  # Using go install to fetch the binary instead of compiling from source
   version "0.1.0"
+  sha256 "201374fcc1bc2d5b54930f6cd0ae4eb4bce8f75ad9bcb853e849f1fa899dda66"
   license "MIT"
+  url "https://github.com/FiloSottile/captive-browser"
 
   # livecheck do
   #   url :stable

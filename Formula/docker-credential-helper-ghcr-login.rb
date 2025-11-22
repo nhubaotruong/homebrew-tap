@@ -1,5 +1,6 @@
 # typed: true
 # frozen_string_literal: true
+
 class DockerCredentialHelperGhcrLogin < Formula
   desc "Automagically auth to GitHub Container Registry via docker credential helper"
   homepage "https://github.com/bradschwartz/docker-credential-ghcr-login"
@@ -23,6 +24,6 @@ class DockerCredentialHelperGhcrLogin < Formula
   end
 
   test do
-    assert_predicate bin/"docker-credential-ghcr-login", :exist?
+    assert_path_exists bin/"docker-credential-ghcr-login"
   end
 end

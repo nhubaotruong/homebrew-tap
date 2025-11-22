@@ -15,6 +15,12 @@ class Rootlesskit < Formula
     regex(/^v(\d+(?:\.\d+)+)$/i)
   end
 
+  on_macos do
+    def install
+      odie "rootlesskit is only supported on Linux"
+    end
+  end
+
   on_linux do
     current_version = version
     # Use different resource names to avoid confusion with the main url
@@ -34,7 +40,7 @@ class Rootlesskit < Formula
       end
     end
 
-    def install
+    define_method :install do
       # Homebrew automatically unpacks the tar.gz for the main url
       # For resources, you need to stage them.
       # The `stage` block extracts the resource into a temporary directory.
@@ -51,12 +57,6 @@ class Rootlesskit < Formula
           bin.install "rootlesskit-docker-proxy"
         end
       end
-    end
-  end
-
-  on_macos do
-    def install
-      odie "rootlesskit is only supported on Linux"
     end
   end
 
