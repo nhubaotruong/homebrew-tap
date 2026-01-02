@@ -4,13 +4,12 @@
 class DockerCredentialHelperGhcrLogin < Formula
   desc "Automagically auth to GitHub Container Registry via docker credential helper"
   homepage "https://github.com/bradschwartz/docker-credential-ghcr-login"
-  url "https://github.com/bradschwartz/docker-credential-ghcr-login.git",
+  head "https://github.com/bradschwartz/docker-credential-ghcr-login.git",
     branch: "main"
-  version Utils.git_short_head
   license "MIT"
 
   livecheck do
-    url "https://github.com/bradschwartz/docker-credential-ghcr-login.git"
+    url :head
     strategy :git
   end
 
