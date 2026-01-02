@@ -8,7 +8,7 @@ class AwsSessionManagerPlugin < Formula
   sha256 "beed4c95c42afd29756d9ecea59c3fcbf937b2c35b9ef84d12b93ac6e74726ba"
 
   livecheck do
-    url :homepage
+    url "https://docs.aws.amazon.com/systems-manager/latest/userguide/plugin-version-history.html"
     regex(%r{<td tabindex="-1">(\d+(?:\.\d+)+)</td>}i)
   end
 
