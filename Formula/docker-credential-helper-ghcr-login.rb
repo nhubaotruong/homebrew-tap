@@ -8,6 +8,7 @@ class DockerCredentialHelperGhcrLogin < Formula
     revision: "706dc0da92388a6993dbe5c32090beb550585b30"
   head "https://github.com/bradschwartz/docker-credential-ghcr-login.git",
     branch: "main"
+  version Utils.git_short_head
   license "MIT"
 
   depends_on "go" => :build
