@@ -6,12 +6,12 @@ class DockerCredentialHelperGhcrLogin < Formula
   homepage "https://github.com/bradschwartz/docker-credential-ghcr-login"
   url "https://github.com/bradschwartz/docker-credential-ghcr-login.git",
     branch: "main"
-  version "HEAD"
+  version Utils.git_short_head
   license "MIT"
 
   livecheck do
     url :stable
-    strategy :git
+    strategy :github_latest
   end
 
   depends_on "go" => :build
