@@ -15,6 +15,7 @@ class DockerCredentialHelperGhcrLogin < Formula
   depends_on "gh"
 
   def install
+    ENV["CGO_ENABLED"] = "0"
     system "go", "build", "-trimpath",
            "-ldflags", "-s -w -buildid=",
            *std_go_args(output: bin/"docker-credential-ghcr-login")
