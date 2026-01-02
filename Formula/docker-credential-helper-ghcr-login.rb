@@ -10,8 +10,8 @@ class DockerCredentialHelperGhcrLogin < Formula
   license "MIT"
 
   livecheck do
-    url :stable
-    strategy :github_latest
+    url "https://github.com/bradschwartz/docker-credential-ghcr-login.git"
+    strategy :git
   end
 
   depends_on "go" => :build
