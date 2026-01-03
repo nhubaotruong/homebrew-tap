@@ -21,13 +21,14 @@ cask "http-toolkit" do
   end
 
   binary "httptoolkit"
+  depends_on formula: "wget"
 
   postflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
-    system_command "curl",
-                   args: ["-sL", "-o", "#{Dir.home}/.local/share/icons/httptoolkit.svg",
+    system_command "wget",
+                   args: ["-qO", "#{Dir.home}/.local/share/icons/httptoolkit.svg",
                           "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"]
 
     File.write("#{Dir.home}/.local/share/applications/httptoolkit.desktop", <<~EOS)
