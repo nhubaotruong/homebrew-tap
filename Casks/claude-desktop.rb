@@ -26,7 +26,7 @@ cask "claude-desktop" do
 
   preflight do
     system_command "ar",
-                   args:  ["x", "#{staged_path}/claude-desktop_#{version.csv.second}_#{arch}.deb"],
+                   args:  ["x", "#{staged_path}/claude-desktop_#{version.to_s.split("claude").last}_#{arch}.deb"],
                    chdir: staged_path
 
     system_command "tar",
