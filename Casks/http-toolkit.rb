@@ -5,7 +5,6 @@ cask "http-toolkit" do
   arch arm: "arm64", intel: "x64"
 
   version "1.24.2"
-  depends_on linux: :any
   sha256 arm:   "66fd303044545db610ed3b47e651265e1e3fa84dae002151458e49e2857f101b",
          intel: "962f2e3aeefcc9a4d9ce3671001d90f36bc9bb0b6c9924716fc218309dfa138a"
 
@@ -19,6 +18,8 @@ cask "http-toolkit" do
     url :url
     strategy :github_latest
   end
+
+  depends_on linux: :any
 
   resource "icon" do
     url "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/refs/heads/main/src/icons/icon.svg"
@@ -61,10 +62,10 @@ cask "http-toolkit" do
   ]
 
   zap trash: [
+    "~/.cache/httptoolkit",
     "~/.config/HTTP Toolkit",
     "~/.config/httptoolkit-server",
     "~/.local/share/HTTP Toolkit",
     "~/.local/share/httptoolkit",
-    "~/.cache/httptoolkit",
   ]
 end
