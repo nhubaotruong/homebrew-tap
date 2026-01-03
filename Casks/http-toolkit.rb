@@ -26,6 +26,10 @@ cask "http-toolkit" do
     sha256 "d6f7b68e3cf4659a0dd4c2d465e9ee2268a288a0c357c909f5f4176b1d919d38"
   end
 
+  binary "HttpToolkit-#{version}-linux-#{arch}/httptoolkit"
+  artifact "HttpToolkit-#{version}-linux-#{arch}/httptoolkit.desktop",
+           target: "#{Dir.home}/.local/share/applications/httptoolkit.desktop"
+
   preflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
@@ -50,10 +54,6 @@ cask "http-toolkit" do
       Keywords=httptoolkit;http;debugging;proxy;
     EOS
   end
-
-  artifact "HttpToolkit-#{version}-linux-#{arch}/httptoolkit.desktop",
-           target: "#{Dir.home}/.local/share/applications/httptoolkit.desktop"
-  binary "HttpToolkit-#{version}-linux-#{arch}/httptoolkit"
 
   uninstall delete: [
     "#{Dir.home}/.local/share/applications/httptoolkit.desktop",
