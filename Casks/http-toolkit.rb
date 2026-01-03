@@ -20,8 +20,9 @@ cask "http-toolkit" do
     strategy :github_latest
   end
 
-  binary "httptoolkit"
   depends_on formula: "wget"
+
+  binary "httptoolkit"
 
   postflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"

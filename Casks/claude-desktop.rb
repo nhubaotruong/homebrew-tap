@@ -9,7 +9,7 @@ cask "claude-desktop" do
   sha256 arm64_linux:  "9b30d142d138ef4a02d28216c5da36fe29a29e5e6e38eefc5a745ca5dd309b53",
          x86_64_linux: "ea646177f75bb92a2ea6b49b74690e34926aaaf798d5a38df2380fe049464f6a"
 
-  url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version}/claude-desktop_#{version.to_s.split('claude').last}_#{arch}.deb",
+  url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version}/claude-desktop_#{version.to_s.split("claude").last}_#{arch}.deb",
       verified: "github.com/aaddrick/claude-desktop-debian/"
   name "Claude Desktop"
   desc "Claude AI desktop application"
@@ -22,9 +22,11 @@ cask "claude-desktop" do
 
   depends_on formula: "binutils"
 
+  binary "usr/bin/claude-desktop"
+
   preflight do
     system_command "ar",
-                   args: ["x", "#{staged_path}/claude-desktop_#{version.csv.second}_#{arch}.deb"],
+                   args:  ["x", "#{staged_path}/claude-desktop_#{version.csv.second}_#{arch}.deb"],
                    chdir: staged_path
 
     system_command "tar",
@@ -36,8 +38,6 @@ cask "claude-desktop" do
     content.gsub!("/usr/lib/claude-desktop", "#{staged_path}/usr/lib/claude-desktop")
     File.write(launcher, content)
   end
-
-  binary "usr/bin/claude-desktop"
 
   postflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
