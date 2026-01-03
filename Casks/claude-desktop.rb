@@ -30,8 +30,11 @@ cask "claude-desktop" do
                    args:  ["x", "#{staged_path}/claude-desktop_#{version.to_s.split("claude").last}_#{arch}.deb"],
                    chdir: staged_path
 
+    system_command "zstd",
+                   args: ["-d", "#{staged_path}/data.tar.zst"]
+
     system_command "tar",
-                   args: ["--zstd", "-xf", "#{staged_path}/data.tar.zst", "-C", staged_path]
+                   args: ["-xf", "#{staged_path}/data.tar", "-C", staged_path]
 
     # Patch the launcher script to use Homebrew paths
     launcher = "#{staged_path}/usr/bin/claude-desktop"
