@@ -5,7 +5,7 @@ cask "claude-desktop" do
   arch arm: "arm64", intel: "amd64"
   os linux: "linux"
 
-  version "v1.1.10+claude0.14.10"
+  version "1.1.10+claude0.14.10"
   sha256 arm64_linux:  "9b30d142d138ef4a02d28216c5da36fe29a29e5e6e38eefc5a745ca5dd309b53",
          x86_64_linux: "ea646177f75bb92a2ea6b49b74690e34926aaaf798d5a38df2380fe049464f6a"
 
