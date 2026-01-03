@@ -20,11 +20,6 @@ cask "http-toolkit" do
     strategy :github_latest
   end
 
-  resource "icon" do
-    url "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/refs/heads/main/src/icons/icon.svg"
-    sha256 "d6f7b68e3cf4659a0dd4c2d465e9ee2268a288a0c357c909f5f4176b1d919d38"
-  end
-
   binary "HttpToolkit-#{version}-linux-#{arch}/httptoolkit"
   artifact "HttpToolkit-#{version}-linux-#{arch}/httptoolkit.desktop",
            target: "#{Dir.home}/.local/share/applications/httptoolkit.desktop"
@@ -33,9 +28,9 @@ cask "http-toolkit" do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
-    resource("icon").stage do
-      FileUtils.cp "icon.svg", "#{Dir.home}/.local/share/icons/httptoolkit.svg"
-    end
+    system_command "curl",
+                   args: ["-sL", "-o", "#{Dir.home}/.local/share/icons/httptoolkit.svg",
+                          "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"]
 
     File.write("#{staged_path}/HttpToolkit-#{version}-linux-#{arch}/httptoolkit.desktop", <<~EOS)
       [Desktop Entry]
