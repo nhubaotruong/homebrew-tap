@@ -21,10 +21,8 @@ cask "http-toolkit" do
   end
 
   binary "HttpToolkit-#{version}-linux-#{arch}/httptoolkit"
-  artifact "HttpToolkit-#{version}-linux-#{arch}/httptoolkit.desktop",
-           target: "#{Dir.home}/.local/share/applications/httptoolkit.desktop"
 
-  preflight do
+  postflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
@@ -32,7 +30,7 @@ cask "http-toolkit" do
                    args: ["-sL", "-o", "#{Dir.home}/.local/share/icons/httptoolkit.svg",
                           "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"]
 
-    File.write("#{staged_path}/HttpToolkit-#{version}-linux-#{arch}/httptoolkit.desktop", <<~EOS)
+    File.write("#{Dir.home}/.local/share/applications/httptoolkit.desktop", <<~EOS)
       [Desktop Entry]
       Type=Application
       Name=HTTP Toolkit
