@@ -21,6 +21,7 @@ cask "claude-desktop" do
   end
 
   depends_on formula: "binutils"
+  depends_on formula: "zstd"
 
   binary "usr/bin/claude-desktop"
 
@@ -30,7 +31,7 @@ cask "claude-desktop" do
                    chdir: staged_path
 
     system_command "tar",
-                   args: ["-xf", "#{staged_path}/data.tar.zst", "-C", staged_path]
+                   args: ["--zstd", "-xf", "#{staged_path}/data.tar.zst", "-C", staged_path]
 
     # Patch the launcher script to use Homebrew paths
     launcher = "#{staged_path}/usr/bin/claude-desktop"
