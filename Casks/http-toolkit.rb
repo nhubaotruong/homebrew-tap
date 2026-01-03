@@ -20,8 +20,6 @@ cask "http-toolkit" do
     strategy :github_latest
   end
 
-  depends_on linux: :any
-
   resource "icon" do
     url "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/refs/heads/main/src/icons/icon.svg"
     sha256 "d6f7b68e3cf4659a0dd4c2d465e9ee2268a288a0c357c909f5f4176b1d919d38"
