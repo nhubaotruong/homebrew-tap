@@ -11,7 +11,6 @@ cask "claude-desktop" do
 
   url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version}/claude-desktop_#{version.to_s.split("claude").last}_#{arch}.deb",
       verified: "github.com/aaddrick/claude-desktop-debian/"
-  container type: :naked
   name "Claude Desktop"
   desc "Claude AI desktop application"
   homepage "https://claude.ai/"
@@ -21,6 +20,7 @@ cask "claude-desktop" do
     strategy :github_latest
   end
 
+  container type: :naked
   depends_on formula: "libarchive"
 
   binary "usr/bin/claude-desktop"
