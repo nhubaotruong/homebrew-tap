@@ -20,6 +20,7 @@ cask "claude-desktop" do
     strategy :github_latest
   end
 
+  depends_on formula: "libarchive"
   container type: :naked
 
   binary "usr/bin/claude-desktop"

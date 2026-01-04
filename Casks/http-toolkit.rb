@@ -20,6 +20,7 @@ cask "http-toolkit" do
     strategy :github_latest
   end
 
+  depends_on formula: "wget"
   binary "httptoolkit"
 
   postflight do
