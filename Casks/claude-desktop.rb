@@ -53,7 +53,7 @@ cask "claude-desktop" do
       Name=Claude Desktop
       Comment=Claude AI desktop application
       GenericName=AI Assistant
-      Exec=#{HOMEBREW_PREFIX}/usr/bin/claude-desktop %U
+      Exec=#{HOMEBREW_PREFIX}/bin/claude-desktop %U
       Icon=#{Dir.home}/.local/share/icons/claude-desktop.png
       Terminal=false
       StartupNotify=true

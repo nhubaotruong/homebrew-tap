@@ -38,7 +38,7 @@ cask "http-toolkit" do
       Name=HTTP Toolkit
       Comment=HTTP(S) debugging proxy, analyzer, and client
       GenericName=HTTP Debugger
-      Exec=#{HOMEBREW_PREFIX}/httptoolkit %U
+      Exec=#{HOMEBREW_PREFIX}/bin/httptoolkit %U
       Icon=#{Dir.home}/.local/share/icons/httptoolkit.svg
       Terminal=false
       StartupNotify=true
