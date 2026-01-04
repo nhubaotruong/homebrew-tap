@@ -15,13 +15,14 @@ cask "claude-desktop" do
   desc "Claude AI desktop application"
   homepage "https://claude.ai/"
 
+  container type: :naked
+
+  depends_on formula: "libarchive"
+
   livecheck do
     url :url
     strategy :github_latest
   end
-
-  container type: :naked
-  depends_on formula: "libarchive"
 
   binary "usr/bin/claude-desktop"
 
