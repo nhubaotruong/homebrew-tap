@@ -26,7 +26,7 @@ cask "http-toolkit" do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
-    system_command "#{Formula["libarchive"].opt_bin}/wget",
+    system_command "#{Formula["wget"].opt_bin}/wget",
                    args: ["-qO", "#{Dir.home}/.local/share/icons/httptoolkit.svg",
                           "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"]
 
