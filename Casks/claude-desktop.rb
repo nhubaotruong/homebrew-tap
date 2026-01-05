@@ -17,7 +17,7 @@ cask "claude-desktop" do
 
   livecheck do
     url :url
-    strategy :github_latest do |json, regex|
+    strategy :github_latest do |json, _|
       json["tag_name"]&.sub(/^v/i, "")
     end
   end
