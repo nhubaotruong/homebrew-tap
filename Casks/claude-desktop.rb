@@ -17,7 +17,9 @@ cask "claude-desktop" do
 
   livecheck do
     url :url
-    strategy :github_latest
+    strategy :github_latest do |json, regex|
+      json["tag_name"]&.sub(/^v/i, "")
+    end
   end
 
   depends_on formula: "libarchive"
