@@ -21,6 +21,7 @@ cask "http-toolkit" do
   end
 
   depends_on formula: "wget"
+
   binary "httptoolkit"
 
   postflight do
