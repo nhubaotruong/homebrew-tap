@@ -1,6 +1,3 @@
-# typed: true
-# frozen_string_literal: true
-
 class AndroidPlatformTools < Formula
   desc "Android SDK component"
   homepage "https://developer.android.com/tools/releases/platform-tools"

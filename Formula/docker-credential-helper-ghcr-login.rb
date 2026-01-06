@@ -1,6 +1,3 @@
-# typed: true
-# frozen_string_literal: true
-
 class DockerCredentialHelperGhcrLogin < Formula
   desc "Automagically auth to GitHub Container Registry via docker credential helper"
   homepage "https://github.com/bradschwartz/docker-credential-ghcr-login"

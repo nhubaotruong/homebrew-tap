@@ -1,6 +1,3 @@
-# typed: true
-# frozen_string_literal: true
-
 cask "claude-desktop" do
   arch arm: "arm64", intel: "amd64"
   os linux: "linux"

@@ -1,6 +1,3 @@
-# typed: true
-# frozen_string_literal: true
-
 cask "http-toolkit" do
   arch arm: "arm64", intel: "x64"
   os linux: "linux"

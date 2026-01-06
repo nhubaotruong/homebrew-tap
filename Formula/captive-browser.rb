@@ -1,6 +1,3 @@
-# typed: true
-# frozen_string_literal: true
-
 class CaptiveBrowser < Formula
   desc "Dedicated Chrome instance to log into captive portals without DNS issues"
   homepage "https://github.com/FiloSottile/captive-browser"
