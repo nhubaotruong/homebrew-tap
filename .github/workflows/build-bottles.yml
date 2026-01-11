@@ -159,7 +159,7 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Update ${{ matrix.formula }} bottle SHA256 to ${{ steps.build.outputs.sha256 }}"
-            git push
+            git push origin HEAD:${{ github.ref_name }}
           fi
 
       - name: Output bottle info
