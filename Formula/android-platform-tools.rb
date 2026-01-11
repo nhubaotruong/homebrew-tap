@@ -4,6 +4,11 @@ class AndroidPlatformTools < Formula
   url "https://dl.google.com/android/repository/platform-tools_r36.0.2-linux.zip"
   sha256 "3afdea91441815ab41254193df0343d92c1b1c0d0237165c3a345c8af8891c31"
 
+  bottle do
+    root_url "https://github.com/nhubaotruong/homebrew-tap/releases/download/android-platform-tools-36.0.2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "371a29e8b40a10f623b72cd53a32214756e2875a9ae0e185161f5b10a11bd170"
+  end
+
   livecheck do
     url :homepage
     regex(/data-text=["']?[^"' >]*?v?(\d+(?:\.\d+)+)["'> (]/i)
