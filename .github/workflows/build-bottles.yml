@@ -7,8 +7,8 @@ on:
       - "Formula/*.rb"
   workflow_dispatch:
     inputs:
-      formula:
-        description: "Formula to build (leave empty for all)"
+      formulas:
+        description: "Space-separated formulas to build (leave empty for all)"
         required: false
         default: ""
 
@@ -30,8 +30,10 @@ jobs:
       - name: Detect changed formulas
         id: detect
         run: |
-          if [ -n "${{ github.event.inputs.formula }}" ]; then
-            FORMULAS='["${{ github.event.inputs.formula }}"]'
+          INPUT_FORMULAS="${{ github.event.inputs.formulas }}"
+          if [ -n "$INPUT_FORMULAS" ]; then
+            # Convert space-separated input to JSON array
+            FORMULAS=$(echo "$INPUT_FORMULAS" | tr ' ' '\n' | grep -v '^$' | jq -R -s -c 'split("\n") | map(select(length > 0))')
           else
             CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'Formula/*.rb' | xargs -I {} basename {} .rb | jq -R -s -c 'split("\n") | map(select(length > 0))')
             if [ "$CHANGED" = "[]" ] || [ -z "$CHANGED" ]; then
@@ -122,6 +124,26 @@ jobs:
           path: ${{ steps.build.outputs.bottle_path }}
           retention-days: 7
 
+      - name: Save bottle info
+        run: |
+          mkdir -p bottle-info
+          cat > "bottle-info/${{ matrix.formula }}.json" << EOF
+          {
+            "formula": "${{ matrix.formula }}",
+            "version": "${{ steps.formula-info.outputs.version }}",
+            "sha256": "${{ steps.build.outputs.sha256 }}",
+            "root_url": "https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}"
+          }
+          EOF
+          cat "bottle-info/${{ matrix.formula }}.json"
+
+      - name: Upload bottle info
+        uses: actions/upload-artifact@v4
+        with:
+          name: bottle-info-${{ matrix.formula }}
+          path: bottle-info/
+          retention-days: 1
+
       - name: Create/Update Release
         uses: softprops/action-gh-release@v2
         with:
@@ -141,33 +163,6 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update formula with bottle SHA256
-        run: |
-          VERSION="${{ steps.formula-info.outputs.version }}"
-          ROOT_URL="https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${VERSION}"
-
-          python3 scripts/update-bottle.py \
-            --formula "Formula/${{ matrix.formula }}.rb" \
-            --sha256 "${{ steps.build.outputs.sha256 }}" \
-            --root-url "$ROOT_URL"
-
-          cat "Formula/${{ matrix.formula }}.rb"
-
-      - name: Commit formula update
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
-          git add "Formula/${{ matrix.formula }}.rb"
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Update ${{ matrix.formula }} bottle SHA256 to ${{ steps.build.outputs.sha256 }}"
-            git push origin HEAD:refs/heads/${{ github.ref_name }}
-          fi
 
       - name: Output bottle info
         run: |
@@ -189,3 +184,72 @@ jobs:
             echo "end"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  update-formulas:
+    needs: [detect-changes, build-bottle]
+    if: always() && needs.build-bottle.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all bottle info
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bottle-info-*
+          path: bottle-info-all
+          merge-multiple: true
+
+      - name: Update all formulas
+        run: |
+          echo "Updating formulas with bottle info..."
+          for info_file in bottle-info-all/*.json; do
+            if [ -f "$info_file" ]; then
+              echo "Processing: $info_file"
+              cat "$info_file"
+
+              FORMULA=$(jq -r '.formula' "$info_file")
+              SHA256=$(jq -r '.sha256' "$info_file")
+              ROOT_URL=$(jq -r '.root_url' "$info_file")
+
+              echo "Updating Formula/$FORMULA.rb with SHA256: $SHA256"
+
+              python3 scripts/update-bottle.py \
+                --formula "Formula/$FORMULA.rb" \
+                --sha256 "$SHA256" \
+                --root-url "$ROOT_URL"
+
+              echo "---"
+            fi
+          done
+
+      - name: Commit all formula updates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+
+          git add Formula/*.rb
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            # Build commit message with all updated formulas
+            UPDATED_FORMULAS=""
+            for info_file in bottle-info-all/*.json; do
+              if [ -f "$info_file" ]; then
+                FORMULA=$(jq -r '.formula' "$info_file")
+                UPDATED_FORMULAS="$UPDATED_FORMULAS $FORMULA"
+              fi
+            done
+            UPDATED_FORMULAS=$(echo "$UPDATED_FORMULAS" | xargs)
+
+            git commit -m "Update bottle SHA256 for: $UPDATED_FORMULAS"
+            git push origin HEAD:refs/heads/${{ github.ref_name }}
+          fi
