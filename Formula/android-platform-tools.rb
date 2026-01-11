@@ -1,8 +1,8 @@
 class AndroidPlatformTools < Formula
   desc "Android SDK component"
   homepage "https://developer.android.com/tools/releases/platform-tools"
-  url "https://dl.google.com/android/repository/platform-tools_r36.0.0-linux.zip"
-  sha256 "0ead642c943ffe79701fccca8f5f1c69c4ce4f43df2eefee553f6ccb27cbfbe8"
+  url "https://dl.google.com/android/repository/platform-tools_r36.0.2-linux.zip"
+  sha256 "3afdea91441815ab41254193df0343d92c1b1c0d0237165c3a345c8af8891c31"
 
   livecheck do
     url :homepage
