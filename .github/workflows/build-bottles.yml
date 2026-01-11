@@ -147,68 +147,15 @@ jobs:
 
       - name: Update formula with bottle SHA256
         run: |
-          export FORMULA_FILE="Formula/${{ matrix.formula }}.rb"
-          export VERSION="${{ steps.formula-info.outputs.version }}"
-          export SHA256="${{ steps.build.outputs.sha256 }}"
-          export ROOT_URL="https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${VERSION}"
+          VERSION="${{ steps.formula-info.outputs.version }}"
+          ROOT_URL="https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${VERSION}"
 
-          python3 << 'PYTHON_EOF'
-import re
-import os
+          python3 scripts/update-bottle.py \
+            --formula "Formula/${{ matrix.formula }}.rb" \
+            --sha256 "${{ steps.build.outputs.sha256 }}" \
+            --root-url "$ROOT_URL"
 
-formula_file = os.environ['FORMULA_FILE']
-sha256 = os.environ['SHA256']
-root_url = os.environ['ROOT_URL']
-
-with open(formula_file, 'r') as f:
-    content = f.read()
-
-bottle_block = f'''  bottle do
-    root_url "{root_url}"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "{sha256}"
-  end
-
-'''
-
-if 'bottle do' in content:
-    # Update existing bottle block
-    content = re.sub(
-        r'sha256 cellar: :any_skip_relocation, x86_64_linux: "[a-f0-9]+"',
-        f'sha256 cellar: :any_skip_relocation, x86_64_linux: "{sha256}"',
-        content
-    )
-    content = re.sub(
-        r'root_url "https://github.com/[^"]+/releases/download/[^"]+"',
-        f'root_url "{root_url}"',
-        content
-    )
-else:
-    # Insert bottle block after license or sha256 line
-    # Homebrew order: url, sha256, license, bottle, livecheck, head, depends_on
-    if re.search(r'^\s*license\s', content, re.MULTILINE):
-        content = re.sub(
-            r'(^\s*license\s+.*$)',
-            r'\1\n\n' + bottle_block.rstrip(),
-            content,
-            count=1,
-            flags=re.MULTILINE
-        )
-    elif re.search(r'^  sha256 "[a-f0-9]+"', content, re.MULTILINE):
-        content = re.sub(
-            r'(^  sha256 "[a-f0-9]+")',
-            r'\1\n\n' + bottle_block.rstrip(),
-            content,
-            count=1,
-            flags=re.MULTILINE
-        )
-
-with open(formula_file, 'w') as f:
-    f.write(content)
-
-print(f"Updated {formula_file}")
-PYTHON_EOF
-
-          cat "$FORMULA_FILE"
+          cat "Formula/${{ matrix.formula }}.rb"
 
       - name: Commit formula update
         run: |
