@@ -88,8 +88,8 @@ jobs:
           cd "$(brew --cache)"
           brew bottle --json --root-url="https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}" "$FORMULA"
 
-          BOTTLE_FILE=$(find . -maxdepth 1 -name '*.bottle.tar.gz' -printf '%f\n' 2>/dev/null | head -1)
-          BOTTLE_JSON=$(find . -maxdepth 1 -name '*.bottle.json' -printf '%f\n' 2>/dev/null | head -1)
+          BOTTLE_FILE=$(find . -maxdepth 1 -name '*.bottle*.tar.gz' -printf '%f\n' 2>/dev/null | head -1)
+          BOTTLE_JSON=$(find . -maxdepth 1 -name '*.bottle*.json' -printf '%f\n' 2>/dev/null | head -1)
 
           if [ -z "$BOTTLE_FILE" ]; then
             echo "No bottle file found!"
