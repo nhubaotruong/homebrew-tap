@@ -6,11 +6,6 @@ class DockerCredentialHelperGhcrLogin < Formula
   version "706dc0d"
   license "MIT"
 
-  bottle do
-    root_url "https://github.com/nhubaotruong/homebrew-tap/releases/download/docker-credential-helper-ghcr-login-706dc0d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "PLACEHOLDER_SHA256"
-  end
-
   head "https://github.com/bradschwartz/docker-credential-ghcr-login.git",
        branch: "main"
 

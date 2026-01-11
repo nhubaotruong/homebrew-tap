@@ -6,11 +6,6 @@ class CaptiveBrowser < Formula
   sha256 "201374fcc1bc2d5b54930f6cd0ae4eb4bce8f75ad9bcb853e849f1fa899dda66"
   license "MIT"
 
-  bottle do
-    root_url "https://github.com/nhubaotruong/homebrew-tap/releases/download/captive-browser-0.1.0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "PLACEHOLDER_SHA256"
-  end
-
   # livecheck do
   #   url :stable
   #   strategy :github_latest
