@@ -31,19 +31,16 @@ jobs:
         id: detect
         run: |
           if [ -n "${{ github.event.inputs.formula }}" ]; then
-            # Manual trigger with specific formula
             FORMULAS='["${{ github.event.inputs.formula }}"]'
           else
-            # Detect changed formula files
             CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'Formula/*.rb' | xargs -I {} basename {} .rb | jq -R -s -c 'split("\n") | map(select(length > 0))')
             if [ "$CHANGED" = "[]" ] || [ -z "$CHANGED" ]; then
-              # If no changes detected, build all
-              FORMULAS=$(ls Formula/*.rb | xargs -I {} basename {} .rb | jq -R -s -c 'split("\n") | map(select(length > 0))')
+              FORMULAS=$(find Formula -maxdepth 1 -name '*.rb' -printf '%f\n' | sed 's/\.rb$//' | jq -R -s -c 'split("\n") | map(select(length > 0))')
             else
               FORMULAS="$CHANGED"
             fi
           fi
-          echo "formulas=$FORMULAS" >> $GITHUB_OUTPUT
+          echo "formulas=$FORMULAS" >> "$GITHUB_OUTPUT"
           echo "Building formulas: $FORMULAS"
 
   build-bottle:
@@ -65,15 +62,14 @@ jobs:
         id: formula-info
         run: |
           FORMULA_FILE="Formula/${{ matrix.formula }}.rb"
-          VERSION=$(grep -E '^\s*version\s+' "$FORMULA_FILE" | head -1 | sed 's/.*version\s*["'\'']\([^"'\'']*\)["'\''].*/\1/' || true)
+          VERSION=$(grep -E '^\s*version\s+' "$FORMULA_FILE" | head -1 | sed 's/.*version\s*["\x27]\([^"\x27]*\)["\x27].*/\1/' || true)
           if [ -z "$VERSION" ]; then
-            # Try to extract from URL for formulas without explicit version
             VERSION=$(grep -E '^\s*url\s+' "$FORMULA_FILE" | head -1 | grep -oP '[\d]+\.[\d]+\.[\d]+' | head -1 || true)
           fi
           if [ -z "$VERSION" ]; then
             VERSION="1.0.0"
           fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Formula: ${{ matrix.formula }}, Version: $VERSION"
 
       - name: Install formula dependencies
@@ -87,49 +83,46 @@ jobs:
           set -ex
           FORMULA="${{ github.repository_owner }}/${{ github.event.repository.name }}/${{ matrix.formula }}"
 
-          # Build the bottle
           brew install --build-bottle "$FORMULA"
 
-          # Create the bottle
-          cd $(brew --cache)
+          cd "$(brew --cache)"
           brew bottle --json --root-url="https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}" "$FORMULA"
 
-          # Find the bottle file
-          BOTTLE_FILE=$(ls *.bottle.tar.gz 2>/dev/null | head -1)
-          BOTTLE_JSON=$(ls *.bottle.json 2>/dev/null | head -1)
+          BOTTLE_FILE=$(find . -maxdepth 1 -name '*.bottle.tar.gz' -printf '%f\n' 2>/dev/null | head -1)
+          BOTTLE_JSON=$(find . -maxdepth 1 -name '*.bottle.json' -printf '%f\n' 2>/dev/null | head -1)
 
           if [ -z "$BOTTLE_FILE" ]; then
             echo "No bottle file found!"
             exit 1
           fi
 
-          # Rename bottle to standard format
           FINAL_NAME="${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}.x86_64_linux.bottle.tar.gz"
           mv "$BOTTLE_FILE" "$FINAL_NAME" || true
           BOTTLE_FILE="$FINAL_NAME"
 
-          echo "bottle_file=$BOTTLE_FILE" >> $GITHUB_OUTPUT
-          echo "bottle_json=$BOTTLE_JSON" >> $GITHUB_OUTPUT
-          echo "bottle_path=$(brew --cache)/$BOTTLE_FILE" >> $GITHUB_OUTPUT
-
-          # Get SHA256
           SHA256=$(sha256sum "$BOTTLE_FILE" | cut -d' ' -f1)
-          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+
+          {
+            echo "bottle_file=$BOTTLE_FILE"
+            echo "bottle_json=$BOTTLE_JSON"
+            echo "bottle_path=$(brew --cache)/$BOTTLE_FILE"
+            echo "sha256=$SHA256"
+          } >> "$GITHUB_OUTPUT"
+
           echo "Bottle SHA256: $SHA256"
 
       - name: Upload bottle artifact
         uses: actions/upload-artifact@v4
         with:
           name: bottle-${{ matrix.formula }}
-          path: |
-            ${{ steps.build.outputs.bottle_path }}
+          path: ${{ steps.build.outputs.bottle_path }}
           retention-days: 7
 
       - name: Create/Update Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}
-          name: "${{ matrix.formula }} ${{ steps.formula-info.outputs.version }}"
+          name: ${{ matrix.formula }} ${{ steps.formula-info.outputs.version }}
           body: |
             Bottle release for `${{ matrix.formula }}` version `${{ steps.formula-info.outputs.version }}`
 
@@ -171,19 +164,21 @@ jobs:
 
       - name: Output bottle info
         run: |
-          echo "## Bottle Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Formula | ${{ matrix.formula }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version | ${{ steps.formula-info.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| SHA256 | \`${{ steps.build.outputs.sha256 }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Release | ${{ matrix.formula }}-${{ steps.formula-info.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Add this to your formula:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`ruby" >> $GITHUB_STEP_SUMMARY
-          echo "bottle do" >> $GITHUB_STEP_SUMMARY
-          echo "  root_url \"https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}\"" >> $GITHUB_STEP_SUMMARY
-          echo "  sha256 cellar: :any_skip_relocation, x86_64_linux: \"${{ steps.build.outputs.sha256 }}\"" >> $GITHUB_STEP_SUMMARY
-          echo "end" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## Bottle Build Summary"
+            echo ""
+            echo "| Property | Value |"
+            echo "|----------|-------|"
+            echo "| Formula | ${{ matrix.formula }} |"
+            echo "| Version | ${{ steps.formula-info.outputs.version }} |"
+            echo "| SHA256 | \`${{ steps.build.outputs.sha256 }}\` |"
+            echo "| Release | ${{ matrix.formula }}-${{ steps.formula-info.outputs.version }} |"
+            echo ""
+            echo "Add this to your formula:"
+            echo "\`\`\`ruby"
+            echo "bottle do"
+            echo "  root_url \"https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}\""
+            echo "  sha256 cellar: :any_skip_relocation, x86_64_linux: \"${{ steps.build.outputs.sha256 }}\""
+            echo "end"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"
