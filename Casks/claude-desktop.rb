@@ -23,6 +23,10 @@ cask "claude-desktop" do
   container type: :naked
 
   binary "usr/bin/claude-desktop"
+  artifact "usr/share/icons/hicolor/256x256/apps/claude-desktop.png",
+           target: "#{Dir.home}/.local/share/icons/claude-desktop.png"
+  artifact "claude-desktop.desktop",
+           target: "#{Dir.home}/.local/share/applications/claude-desktop.desktop"
 
   preflight do
     system_command "#{Formula["libarchive"].opt_bin}/bsdtar",
@@ -37,16 +41,13 @@ cask "claude-desktop" do
     content = File.read(launcher)
     content.gsub!("/usr/lib/claude-desktop", "#{staged_path}/usr/lib/claude-desktop")
     File.write(launcher, content)
-  end
 
-  postflight do
+    # Create target directories
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
-    FileUtils.cp "#{staged_path}/usr/share/icons/hicolor/256x256/apps/claude-desktop.png",
-                 "#{Dir.home}/.local/share/icons/claude-desktop.png"
-
-    File.write("#{Dir.home}/.local/share/applications/claude-desktop.desktop", <<~EOS)
+    # Create .desktop file in staged_path
+    File.write("#{staged_path}/claude-desktop.desktop", <<~EOS)
       [Desktop Entry]
       Type=Application
       Name=Claude Desktop
@@ -62,11 +63,6 @@ cask "claude-desktop" do
       Keywords=claude;ai;assistant;anthropic;
     EOS
   end
-
-  uninstall delete: [
-    "#{Dir.home}/.local/share/applications/claude-desktop.desktop",
-    "#{Dir.home}/.local/share/icons/claude-desktop.png",
-  ]
 
   zap trash: [
     "~/.config/Claude",
