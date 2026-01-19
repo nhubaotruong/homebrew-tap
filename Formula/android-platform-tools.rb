@@ -31,12 +31,12 @@ class AndroidPlatformTools < Formula
   end
 
   test do
-    system bin/"adb"
-    system bin/"etc1tool"
-    system bin/"fastboot"
-    system bin/"hprof-conv"
-    system bin/"make_f2fs"
-    system bin/"make_f2fs_casefold"
-    system bin/"mke2fs"
+    assert_match "Android Debug Bridge", shell_output("#{bin}/adb --version")
+    assert_match "fastboot version", shell_output("#{bin}/fastboot --version")
+    assert_predicate bin/"etc1tool", :executable?
+    assert_predicate bin/"hprof-conv", :executable?
+    assert_predicate bin/"make_f2fs", :executable?
+    assert_predicate bin/"make_f2fs_casefold", :executable?
+    assert_predicate bin/"mke2fs", :executable?
   end
 end
