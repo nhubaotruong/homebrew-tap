@@ -20,16 +20,23 @@ cask "http-toolkit" do
   depends_on formula: "wget"
 
   binary "httptoolkit"
+  artifact "httptoolkit.svg",
+           target: "#{Dir.home}/.local/share/icons/httptoolkit.svg"
+  artifact "httptoolkit.desktop",
+           target: "#{Dir.home}/.local/share/applications/httptoolkit.desktop"
 
-  postflight do
+  preflight do
+    # Create target directories
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
+    # Download icon to staged_path
     system_command "#{Formula["wget"].opt_bin}/wget",
-                   args: ["-qO", "#{Dir.home}/.local/share/icons/httptoolkit.svg",
+                   args: ["-qO", "#{staged_path}/httptoolkit.svg",
                           "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"]
 
-    File.write("#{Dir.home}/.local/share/applications/httptoolkit.desktop", <<~EOS)
+    # Create .desktop file in staged_path
+    File.write("#{staged_path}/httptoolkit.desktop", <<~EOS)
       [Desktop Entry]
       Type=Application
       Name=HTTP Toolkit
@@ -45,11 +52,6 @@ cask "http-toolkit" do
       Keywords=httptoolkit;http;debugging;proxy;
     EOS
   end
-
-  uninstall delete: [
-    "#{Dir.home}/.local/share/applications/httptoolkit.desktop",
-    "#{Dir.home}/.local/share/icons/httptoolkit.svg",
-  ]
 
   zap trash: [
     "~/.cache/httptoolkit",
