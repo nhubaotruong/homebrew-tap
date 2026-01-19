@@ -11,7 +11,7 @@ class AndroidPlatformTools < Formula
 
   bottle do
     root_url "https://github.com/nhubaotruong/homebrew-tap/releases/download/android-platform-tools-36.0.2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "4207b032b877d736b24acba29deb0c642c112059aefe7d9e696f784c35347495"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "159f8b7024531ecb78b6e101f6285e077dd57e96c457948f5bac78ff64fbd5f7"
   end
 
   depends_on :linux
