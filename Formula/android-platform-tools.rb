@@ -17,6 +17,9 @@ class AndroidPlatformTools < Formula
   depends_on :linux
 
   def install
+    # Install bundled libc++.so
+    lib.install Dir["lib64/*"]
+
     bin.install "adb"
     bin.install "etc1tool"
     bin.install "fastboot"
