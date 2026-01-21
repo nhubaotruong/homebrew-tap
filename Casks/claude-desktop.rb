@@ -2,9 +2,9 @@ cask "claude-desktop" do
   arch arm: "arm64", intel: "amd64"
   os linux: "linux"
 
-  version "1.2.1+claude1.1.381"
-  sha256 arm64_linux:  "8a7ea96aa7de1c60ab80b9bc49e6a135a3bd34348e541222e1b3f2146d58d4c6",
-         x86_64_linux: "4cc3d1ffd0137863c3c2491b57c26e79629f098c4a3733d2ed53d62ed74ee1ec"
+  version "1.2.2+claude1.1.381"
+  sha256 arm64_linux:  "38597f36cf306c97895d19d4635de027261c1cc984498853b326cb63716b28c7",
+         x86_64_linux: "cc52912fbdbfd0fa981fe0b47d7d5fc1b4dfc36f6549a6cda4a0f595f1112aad"
 
   url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version}/claude-desktop_#{version.to_s.split("claude").last}_#{arch}.deb",
       verified: "github.com/aaddrick/claude-desktop-debian/"
