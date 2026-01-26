@@ -6,7 +6,7 @@ cask "claude-desktop" do
   sha256 arm64_linux:  "4e8dddd507385e47e861e45bbc9af108c8ebd8710347f1d8d4d13d470d62ba7d",
          x86_64_linux: "287fd457e5a5e9dbd3ef2d851b70bbb4c6952e2820ed2704977697e07fb0f45e"
 
-  url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version}/claude-desktop_#{version.to_s.split("claude").last}_#{arch}.deb",
+  url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub('+', '%2B')}/claude-desktop_#{version.to_s.split('claude').last.tr('+', '-')}_#{arch}.deb",
       verified: "github.com/aaddrick/claude-desktop-debian/"
   name "Claude Desktop"
   desc "Claude AI desktop application"
@@ -30,7 +30,7 @@ cask "claude-desktop" do
 
   preflight do
     system_command "#{Formula["libarchive"].opt_bin}/bsdtar",
-                   args: ["-xf", "#{staged_path}/claude-desktop_#{version.to_s.split("claude").last}_#{arch}.deb",
+                   args: ["-xf", "#{staged_path}/claude-desktop_#{version.to_s.split('claude').last.tr('+', '-')}_#{arch}.deb",
                           "--strip-components=0", "-C", staged_path, "data.tar.zst"]
 
     system_command "#{Formula["libarchive"].opt_bin}/bsdtar",
