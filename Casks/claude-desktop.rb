@@ -2,14 +2,14 @@ cask "claude-desktop" do
   arch arm: "arm64", intel: "amd64"
   os linux: "linux"
 
-  version "1.3.1+claude1.1.799"
-  sha256 arm64_linux:  "4e8dddd507385e47e861e45bbc9af108c8ebd8710347f1d8d4d13d470d62ba7d",
-         x86_64_linux: "287fd457e5a5e9dbd3ef2d851b70bbb4c6952e2820ed2704977697e07fb0f45e"
+  version "1.3.8+claude1.1.799"
+  sha256 arm64_linux:  "33d4e09b59c720b4a0e3703a4ff871ec2a7c0612a663d4c19a92f3ae40dd724a",
+         x86_64_linux: "b7a2b17d26640ca99c543a781fe362674c02f002bf6d21a0df330697b26a0a9a"
 
   version_array = version.split("+claude")
   major_minor_patch = version_array[0]
   claude_version = version_array[1]
-  url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub('+', '%2B')}/claude-desktop_#{claude_version}-#{major_minor_patch}_#{arch}.deb",
+  url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}-#{major_minor_patch}_#{arch}.deb",
       verified: "github.com/aaddrick/claude-desktop-debian/"
   name "Claude Desktop"
   desc "Claude AI desktop application"
