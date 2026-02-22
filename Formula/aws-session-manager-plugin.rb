@@ -14,7 +14,6 @@ class AwsSessionManagerPlugin < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "f7b66983340008161dae5fe331f2b8a891e760bcbbd753256abf79298fecc6c2"
   end
 
-  depends_on "awscli"
   depends_on :linux
 
   def install
