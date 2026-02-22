@@ -10,8 +10,8 @@ class AwsSessionManagerPlugin < Formula
   end
 
   bottle do
-    root_url "https://github.com/nhubaotruong/homebrew-tap/releases/download/aws-session-manager-plugin-1.2.764"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "bfe9ccf1b00d6f94025e2010aaf2b34121a488ccf3322b7fb5565e08a5e4dbdd"
+    root_url "https://github.com/nhubaotruong/homebrew-tap/releases/download/aws-session-manager-plugin-1.2.779"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "f8e26a51ee1799c4070cf7a64144904ef5cd537c3e7b972bfe85d8a9a4a97306"
   end
 
   depends_on :linux
