@@ -7,7 +7,7 @@ class AwsSessionManagerPlugin < Formula
 
   livecheck do
     url "https://docs.aws.amazon.com/systems-manager/latest/userguide/plugin-version-history.html"
-    regex(%r{<td tabindex="-1">(\d+(?:\.\d+)+)</td>}i)
+    regex(%r{<td tabindex="-1">(\d+\.\d+\.\d+\.\d+)</td>}i)
   end
 
   bottle do
