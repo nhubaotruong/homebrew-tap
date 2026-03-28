@@ -112,6 +112,7 @@ jobs:
             echo "bottle_file=$BOTTLE_FILE"
             echo "bottle_json=$BOTTLE_JSON"
             echo "bottle_path=$(brew --cache)/$BOTTLE_FILE"
+            echo "bottle_json_path=$(brew --cache)/$BOTTLE_JSON"
             echo "sha256=$SHA256"
           } >> "$GITHUB_OUTPUT"
 
@@ -158,7 +159,9 @@ jobs:
             ```bash
             brew install ${{ github.repository_owner }}/${{ github.event.repository.name }}/${{ matrix.formula }}
             ```
-          files: ${{ steps.build.outputs.bottle_path }}
+          files: |
+            ${{ steps.build.outputs.bottle_path }}
+            ${{ steps.build.outputs.bottle_json_path }}
           draft: false
           prerelease: false
         env:
