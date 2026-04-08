@@ -92,10 +92,13 @@ jobs:
           brew install --build-bottle "$FORMULA"
 
           cd "$(brew --cache)"
+          # Clean any pre-existing bottle files to avoid picking up unrelated bottles (e.g. portable-ruby)
+          rm -f ./${{ matrix.formula }}--*.bottle*.tar.gz ./${{ matrix.formula }}--*.bottle*.json
+
           brew bottle --json --root-url="https://github.com/${{ github.repository }}/releases/download/${{ matrix.formula }}-${{ steps.formula-info.outputs.version }}" "$FORMULA"
 
-          BOTTLE_FILE=$(find . -maxdepth 1 -name '*.bottle*.tar.gz' -printf '%f\n' 2>/dev/null | head -1)
-          BOTTLE_JSON=$(find . -maxdepth 1 -name '*.bottle*.json' -printf '%f\n' 2>/dev/null | head -1)
+          BOTTLE_FILE=$(find . -maxdepth 1 -name '${{ matrix.formula }}--*bottle*.tar.gz' -printf '%f\n' 2>/dev/null | head -1)
+          BOTTLE_JSON=$(find . -maxdepth 1 -name '${{ matrix.formula }}--*bottle*.json' -printf '%f\n' 2>/dev/null | head -1)
 
           if [ -z "$BOTTLE_FILE" ]; then
             echo "No bottle file found!"
