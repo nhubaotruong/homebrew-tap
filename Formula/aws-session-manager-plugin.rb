@@ -1,9 +1,9 @@
 class AwsSessionManagerPlugin < Formula
   desc "Official Amazon AWS session manager plugin"
   homepage "https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html"
-  url "https://s3.amazonaws.com/session-manager-downloads/plugin/1.2.792.0/ubuntu_64bit/session-manager-plugin.deb"
-  version "1.2.792.0"
-  sha256 "34e2e68254c77a182264232ed47985901e5f07f190c280400746a004276830c4"
+  url "https://s3.amazonaws.com/session-manager-downloads/plugin/1.2.804.0/ubuntu_64bit/session-manager-plugin.deb"
+  version "1.2.804.0"
+  sha256 "5ca19f45bd29082cd28f5001444cc0e9743b866f6431503dfd528bdc81a21bc3"
 
   livecheck do
     url "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/VERSION"
