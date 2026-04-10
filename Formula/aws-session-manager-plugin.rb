@@ -6,8 +6,8 @@ class AwsSessionManagerPlugin < Formula
   sha256 "34e2e68254c77a182264232ed47985901e5f07f190c280400746a004276830c4"
 
   livecheck do
-    url "https://docs.aws.amazon.com/systems-manager/latest/userguide/plugin-version-history.html"
-    regex(%r{<td tabindex="-1">(\d+\.\d+\.\d+\.\d+)</td>}i)
+    url "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/VERSION"
+    regex(/(\d+\.\d+\.\d+\.\d+)/i)
   end
 
   bottle do
