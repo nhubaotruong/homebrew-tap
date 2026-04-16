@@ -2,9 +2,9 @@ cask "http-toolkit" do
   arch arm: "arm64", intel: "x64"
   os linux: "linux"
 
-  version "1.25.1"
-  sha256 arm64_linux:  "106d25a9143ce5118a8206b2992a2aa2cad24c62b7cb2fa5bd1c04e0000f8f23",
-         x86_64_linux: "cf6a86123b17789d0123cbec787ac758fc82269350e67b3ec486885189417ede"
+  version "1.25.2"
+  sha256 arm64_linux:  "487102efe648057d5f66ff63213b710c36704824043e4fae987a0148c3905ba3",
+         x86_64_linux: "e137e4c3fb390b2ebd76e767a72a1d2ebedb3f5d7f7f7acec4989f3ad65f03a5"
 
   url "https://github.com/httptoolkit/httptoolkit-desktop/releases/download/v#{version}/HttpToolkit-#{version}-linux-#{arch}.zip",
       verified: "github.com/httptoolkit/httptoolkit-desktop/"
