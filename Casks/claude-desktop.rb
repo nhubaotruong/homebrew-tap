@@ -2,9 +2,9 @@ cask "claude-desktop" do
   arch arm: "arm64", intel: "amd64"
   os linux: "linux"
 
-  version "2.0.7+claude1.5354.0"
-  sha256 arm64_linux:  "6a7149ddce4b826faf54c632f25bbe8b4805d8f4fc7767ab73efd22ad79096cf",
-         x86_64_linux: "212721317d5cbbc73ab7655bd4a00e336172dfc3a8f3dd190d8e60f6f813c3aa"
+  version "2.0.8+claude1.5354.0"
+  sha256 arm64_linux:  "1f79fdded9791ecb009c67b9d8db5adae0ca22d11ba0de0fbe86c4c6fe06f221",
+         x86_64_linux: "72992feb22656cf13ff219c3600d1d10548196c48bbffd039429315d05f192ef"
 
   version_array = version.split("+claude")
   major_minor_patch = version_array[0]
