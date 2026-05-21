@@ -35,7 +35,7 @@ cask "docker-sbx" do
       FileUtils.install f, "#{staged_path}/libexec/#{File.basename(f)}", mode: 0644
     end
 
-    FileUtils.install "#{srcdir}/libkrun.so", "#{staged_path}/libexec/lib/libkrun.so", mode: 0755
+    FileUtils.install "#{srcdir}/libsailor.so", "#{staged_path}/libexec/lib/libsailor.so", mode: 0755
   end
 
   zap trash: "~/.docker/sbx"
