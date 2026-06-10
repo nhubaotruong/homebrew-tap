@@ -53,6 +53,10 @@ cask "claude-desktop" do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
+    # Clear stale targets to avoid "Generic Artifact already exists" on upgrade
+    FileUtils.rm_f "#{Dir.home}/.local/share/icons/claude-desktop.png"
+    FileUtils.rm_f "#{Dir.home}/.local/share/applications/claude-desktop.desktop"
+
     # Create .desktop file in staged_path
     File.write("#{staged_path}/claude-desktop.desktop", <<~EOS)
       [Desktop Entry]
