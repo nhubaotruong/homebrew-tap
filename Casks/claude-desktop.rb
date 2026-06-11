@@ -3,14 +3,17 @@ cask "claude-desktop" do
   os linux: "linux"
 
   version "2.0.19+claude1.11847.5"
-  sha256 arm64_linux:  "4bda08c3833f5405aa2b21e9d76ca5f1dceb859809c1e32a8b85b23c38f11aee",
-         x86_64_linux: "f4a84a16ecc8d1ab8a8caff058678269bf86b1c7d74bec94b45f7eaf307ab1e5"
 
-  version_array = version.split("+claude")
-  major_minor_patch = version_array[0]
-  claude_version = version_array[1]
-  url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}-#{major_minor_patch}_#{arch}.deb",
-      verified: "github.com/aaddrick/claude-desktop-debian/"
+  on_linux do
+    sha256 arm64_linux:  "4bda08c3833f5405aa2b21e9d76ca5f1dceb859809c1e32a8b85b23c38f11aee",
+           x86_64_linux: "f4a84a16ecc8d1ab8a8caff058678269bf86b1c7d74bec94b45f7eaf307ab1e5"
+
+    version_array = version.split("+claude")
+    major_minor_patch = version_array[0]
+    claude_version = version_array[1]
+    url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}-#{major_minor_patch}_#{arch}.deb",
+        verified: "github.com/aaddrick/claude-desktop-debian/"
+  end
   name "Claude Desktop"
   desc "Claude AI desktop application"
   homepage "https://claude.ai/"
