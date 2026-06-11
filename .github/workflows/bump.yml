@@ -25,3 +25,18 @@ jobs:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           brew bump --tap ${{ github.repository }} --open-pr --no-fork
+
+      - name: Enable auto-merge on bump PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PRS=$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --author "github-actions[bot]" \
+            --state open \
+            --json number,title \
+            -q '.[] | select(.title | test("^[a-z0-9-]+ [0-9]")) | .number')
+          for PR in $PRS; do
+            echo "Enabling auto-merge for PR #$PR"
+            gh pr merge "$PR" --repo "${{ github.repository }}" --auto --squash || true
+          done
