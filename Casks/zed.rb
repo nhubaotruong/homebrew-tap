@@ -28,8 +28,8 @@ cask "zed" do
   preflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons/hicolor/512x512/apps"
-    FileUtils.rm("#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png")
-    FileUtils.rm("#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop")
+    FileUtils.rm_f("#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png")
+    FileUtils.rm_f("#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop")
 
     File.write("#{staged_path}/dev.zed.Zed.desktop", <<~EOS)
       [Desktop Entry]
