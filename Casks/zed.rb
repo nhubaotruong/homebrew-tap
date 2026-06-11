@@ -2,9 +2,9 @@ cask "zed" do
   arch arm: "aarch64", intel: "x86_64"
   os linux: "linux"
 
-  version "1.5.5"
-  sha256 arm64_linux:  "4f03d66dd284b3624f5616eda0eb6b47adf0da0ec8f71905461869ef0326f634",
-         x86_64_linux: "884c096c91ed0ef2d3d606357a20231abc7e3c3ae347b4374895373a34d3d264"
+  version "1.6.3"
+  sha256 arm64_linux:  "bb7373c2bab7b809251030a86b3d350b31df40f6a3ae5454fff0afa3ad61877e",
+         x86_64_linux: "0fd618752e4282fa46977863af6b7cdc190ae2db7e0b33aeaf835438e0538db5"
 
   url "https://github.com/zed-industries/zed/releases/download/v#{version}/zed-linux-#{arch}.tar.gz",
       verified: "github.com/zed-industries/zed/"
@@ -28,8 +28,8 @@ cask "zed" do
   preflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons/hicolor/512x512/apps"
-    FileUtils.rm_f "#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png"
-    FileUtils.rm_f "#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop"
+    FileUtils.rm("#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png")
+    FileUtils.rm("#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop")
 
     File.write("#{staged_path}/dev.zed.Zed.desktop", <<~EOS)
       [Desktop Entry]
