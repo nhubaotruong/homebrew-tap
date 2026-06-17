@@ -1,8 +1,8 @@
 cask "docker-sbx" do
   os linux: "linux"
 
-  version "0.32.0"
-  sha256 "2da12380b1b7669b24ff8b6a1c18097fee89c256c6f50e034efe99e1d7816413"
+  version "0.33.0"
+  sha256 "decc0f69603e6c4bdd64e39e2a94636beb10aeff35dd3d44e07435ee6ddbf29d"
 
   url "https://github.com/docker/sbx-releases/releases/download/v#{version}/DockerSandboxes-linux.tar.gz",
       verified: "github.com/docker/sbx-releases/"
