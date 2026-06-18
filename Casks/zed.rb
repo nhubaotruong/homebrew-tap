@@ -31,10 +31,6 @@ cask "zed" do
   preflight do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons/hicolor/512x512/apps"
-    icon_path = "#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png"
-    desktop_path = "#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop"
-    FileUtils.rm(icon_path) if File.exist?(icon_path) || File.symlink?(icon_path)
-    FileUtils.rm(desktop_path) if File.exist?(desktop_path) || File.symlink?(desktop_path)
 
     File.write("#{staged_path}/dev.zed.Zed.desktop", <<~EOS)
       [Desktop Entry]
