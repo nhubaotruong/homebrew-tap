@@ -39,11 +39,11 @@ cask "claude-desktop" do
     major_minor_patch = version_array[0]
     claude_version = version_array[1]
 
-    system_command "#{Formula["libarchive"].opt_bin}/bsdtar",
+    system_command "#{formula_opt_bin("libarchive")}/bsdtar",
                    args: ["-xf", "#{staged_path}/claude-desktop_#{claude_version}-#{major_minor_patch}_#{arch}.deb",
                           "--strip-components=0", "-C", staged_path, "data.tar.zst"]
 
-    system_command "#{Formula["libarchive"].opt_bin}/bsdtar",
+    system_command "#{formula_opt_bin("libarchive")}/bsdtar",
                    args: ["-xf", "#{staged_path}/data.tar.zst", "-C", staged_path]
 
     # Patch the launcher script to use Homebrew paths

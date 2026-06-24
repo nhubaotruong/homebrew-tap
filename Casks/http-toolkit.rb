@@ -34,7 +34,7 @@ cask "http-toolkit" do
     FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
 
     # Download icon to staged_path
-    system_command "#{Formula["wget"].opt_bin}/wget",
+    system_command "#{formula_opt_bin("wget")}/wget",
                    args: ["-qO", "#{staged_path}/httptoolkit.svg",
                           "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"]
 
