@@ -26,7 +26,7 @@ jobs:
         run: |
           brew bump --tap ${{ github.repository }} --open-pr --no-fork
 
-      - name: Enable auto-merge on bump PRs
+      - name: Merge bump PRs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -37,6 +37,6 @@ jobs:
             --json number,title \
             -q '.[] | select(.title | test("^[a-z0-9-]+ [0-9]")) | .number')
           for PR in $PRS; do
-            echo "Enabling auto-merge for PR #$PR"
-            gh pr merge "$PR" --repo "${{ github.repository }}" --auto --squash || true
+            echo "Merging PR #$PR"
+            gh pr merge "$PR" --repo "${{ github.repository }}" --squash --delete-branch || true
           done
