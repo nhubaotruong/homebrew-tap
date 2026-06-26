@@ -23,16 +23,17 @@ cask "zed" do
   end
 
   binary "zed.app/bin/zed"
-  artifact "zed.app/share/icons/hicolor/512x512/apps/zed.png",
-           target: "#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png"
-  artifact "dev.zed.Zed.desktop",
-           target: "#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop"
 
   preflight do
-    FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
-    FileUtils.mkdir_p "#{Dir.home}/.local/share/icons/hicolor/512x512/apps"
+    icon_dir = "#{Dir.home}/.local/share/icons/hicolor/512x512/apps"
+    apps_dir = "#{Dir.home}/.local/share/applications"
+    FileUtils.mkdir_p apps_dir
+    FileUtils.mkdir_p icon_dir
 
-    File.write("#{staged_path}/dev.zed.Zed.desktop", <<~EOS)
+    FileUtils.cp "#{staged_path}/zed.app/share/icons/hicolor/512x512/apps/zed.png",
+                 "#{icon_dir}/zed.png"
+
+    File.write("#{apps_dir}/dev.zed.Zed.desktop", <<~EOS)
       [Desktop Entry]
       Version=1.0
       Type=Application
@@ -52,6 +53,11 @@ cask "zed" do
       Exec=#{HOMEBREW_PREFIX}/bin/zed --new %U
       Name=Open a new workspace
     EOS
+  end
+
+  uninstall_postflight do
+    FileUtils.rm "#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop", force: true
+    FileUtils.rm "#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png", force: true
   end
 
   zap trash: [
