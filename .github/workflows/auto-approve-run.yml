@@ -1,0 +1,39 @@
+# Auto-approve workflow runs from fork PRs
+#
+# Fork PRs trigger tests.yml on pull_request, but GitHub requires manual
+# approval before the workflow runs (for first-time contributors). This
+# workflow uses pull_request_target (runs in base repo context, bypasses
+# the approval gate) to approve those runs via the API.
+name: Auto-approve fork workflow runs
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  actions: write
+
+jobs:
+  approve:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          retries: 3
+          script: |
+            const runs = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event: 'pull_request',
+              status: 'action_required',
+              head_sha: context.payload.pull_request.head.sha,
+            });
+            for (const run of runs.data.workflow_runs) {
+              console.log(`Approving run ${run.id} (${run.name})`);
+              await github.rest.actions.approveWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+              });
+            }
+            console.log(`Approved ${runs.data.workflow_runs.length} run(s)`);
