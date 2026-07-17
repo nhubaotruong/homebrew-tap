@@ -2,16 +2,14 @@ cask "claude-desktop" do
   arch arm: "arm64", intel: "amd64"
   os linux: "linux"
 
-  version "2.0.22+claude1.15962.1"
+  version "3.2.1+claude1.22209.0"
 
   on_linux do
-    sha256 arm64_linux:  "325bbe4bc649423b56dfe8eb1797004bd9e84b51a5a25b7ad8e800bf7f95a808",
-           x86_64_linux: "7f7e2dab56db345e9ed9aa6d75c533a8768aa697792073ef2d6b70ca1421773d"
+    sha256 arm64_linux:  "7323fe6c3ab6b7078e81a9bf0200806e3486e73bc5873420ee9d26f10b66e1e9",
+           x86_64_linux: "6d18ae792c2bddad01edc97c2c3f4cf489004cefe8fed6760a696ed25c49bf61"
 
-    version_array = version.split("+claude")
-    major_minor_patch = version_array[0]
-    claude_version = version_array[1]
-    url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}-#{major_minor_patch}_#{arch}.deb",
+    claude_version = version.split("+claude")[1]
+    url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}_#{arch}.deb",
         verified: "github.com/aaddrick/claude-desktop-debian/"
   end
   name "Claude Desktop"
@@ -35,22 +33,14 @@ cask "claude-desktop" do
            target: "#{Dir.home}/.local/share/applications/claude-desktop.desktop"
 
   preflight do
-    version_array = version.split("+claude")
-    major_minor_patch = version_array[0]
-    claude_version = version_array[1]
+    claude_version = version.split("+claude")[1]
 
     system_command "#{formula_opt_bin("libarchive")}/bsdtar",
-                   args: ["-xf", "#{staged_path}/claude-desktop_#{claude_version}-#{major_minor_patch}_#{arch}.deb",
-                          "--strip-components=0", "-C", staged_path, "data.tar.zst"]
+                   args: ["-xf", "#{staged_path}/claude-desktop_#{claude_version}_#{arch}.deb",
+                          "--strip-components=0", "-C", staged_path, "data.tar.xz"]
 
     system_command "#{formula_opt_bin("libarchive")}/bsdtar",
-                   args: ["-xf", "#{staged_path}/data.tar.zst", "-C", staged_path]
-
-    # Patch the launcher script to use Homebrew paths
-    launcher = "#{staged_path}/usr/bin/claude-desktop"
-    content = File.read(launcher)
-    content.gsub!("/usr/lib/claude-desktop", "#{staged_path}/usr/lib/claude-desktop")
-    File.write(launcher, content)
+                   args: ["-xf", "#{staged_path}/data.tar.xz", "-C", staged_path]
 
     # Create target directories
     FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
