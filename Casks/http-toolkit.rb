@@ -2,15 +2,16 @@ cask "http-toolkit" do
   arch arm: "arm64", intel: "x64"
   os linux: "linux"
 
-  version "1.26.1"
+  version "1.27.0"
 
   on_linux do
-    sha256 arm64_linux:  "f6df147b5685a3c3718e2b0716cdf2a5336a5cbdf9935bc05588627fbc7d5ccb",
-           x86_64_linux: "3b13cffcafa38fb871241bb81233d867ceb7dc2a83b188da8261f5865ee4fc1d"
+    sha256 arm64_linux:  "0d40ee2d03d1d75df730f1c134f7f2ad5bfbc0de5a836e5cd029283088d858d2",
+           x86_64_linux: "cb27586145e33f7e04117adeb83e5fb672cbd7bc2942499727ed1df4d42cc303"
 
     url "https://github.com/httptoolkit/httptoolkit-desktop/releases/download/v#{version}/HttpToolkit-#{version}-linux-#{arch}.zip",
         verified: "github.com/httptoolkit/httptoolkit-desktop/"
   end
+
   name "HTTP Toolkit"
   desc "HTTP(S) debugging proxy, analyzer, and client"
   homepage "https://httptoolkit.tech/"
