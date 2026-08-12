@@ -2,9 +2,8 @@ cask "claude-desktop" do
   arch arm: "arm64", intel: "amd64"
   os linux: "linux"
 
-  version "3.2.1+claude1.24012.9"
-
   on_linux do
+    version "3.2.1+claude1.24012.9"
     sha256 arm64_linux:  "1a9be177b063365b92e522fedd19c87daf6ebc92a9f71121bdff729e27de408c",
            x86_64_linux: "302e6d208dd8c8e9e52067daa28ef3b1171a1613586fd0e10bedc642225b6ee1"
 
@@ -12,6 +11,7 @@ cask "claude-desktop" do
     url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}_#{arch}.deb",
         verified: "github.com/aaddrick/claude-desktop-debian/"
   end
+
   name "Claude Desktop"
   desc "Claude AI desktop application"
   homepage "https://claude.ai/"

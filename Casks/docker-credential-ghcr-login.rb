@@ -11,6 +11,7 @@ cask "docker-credential-ghcr-login" do
     url "https://github.com/bradschwartz/docker-credential-ghcr-login/releases/download/v#{version}/docker-credential-ghcr-login_#{version}_linux_#{arch}.tar.gz",
         verified: "github.com/bradschwartz/docker-credential-ghcr-login/"
   end
+
   name "Docker Credential Helper for GHCR"
   desc "Automagically auth to GitHub Container Registry via docker credential helper"
   homepage "https://github.com/bradschwartz/docker-credential-ghcr-login"
