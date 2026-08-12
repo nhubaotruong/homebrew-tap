@@ -23,6 +23,7 @@ cask "claude-desktop" do
     end
   end
 
+  depends_on :linux
   depends_on formula: "libarchive"
   container type: :naked
 
