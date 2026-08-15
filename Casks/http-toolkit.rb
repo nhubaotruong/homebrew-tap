@@ -21,6 +21,7 @@ cask "http-toolkit" do
     strategy :github_latest
   end
 
+  depends_on :linux
   depends_on formula: "wget"
 
   binary "httptoolkit"

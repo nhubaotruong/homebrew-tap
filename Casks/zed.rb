@@ -23,6 +23,8 @@ cask "zed" do
     end
   end
 
+  depends_on :linux
+
   binary "zed.app/bin/zed"
 
   preflight do

@@ -15,6 +15,7 @@ cask "docker-sbx" do
     strategy :github_latest
   end
 
+  depends_on :linux
   depends_on formula: "e2fsprogs"
 
   binary "bin/sbx"
