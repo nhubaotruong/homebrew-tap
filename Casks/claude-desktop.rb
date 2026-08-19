@@ -3,9 +3,9 @@ cask "claude-desktop" do
   os linux: "linux"
 
   on_linux do
-    version "3.2.2+claude1.30096.5"
-    sha256 arm64_linux:  "9de0fbb5300d80bbf91dc7e4a4d066bfd6bead3830a0d7ae6c8b0a8529cf59ea",
-           x86_64_linux: "e699763dd0e33bd831a1c771ea2684ead894f2680f02c71693a4e345046bd8f5"
+    version "3.2.2+claude1.32885.1"
+    sha256 arm64_linux:  "5da381569c5b09cacfc83c992920181207ca45fd1270e20654dd7bb21c5d8552",
+           x86_64_linux: "f8a5ddea7c8cbe769589cf19c2e1832d5d532ab19bf8202621ba957c9351a2fc"
 
     claude_version = version.split("+claude")[1]
     url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}_#{arch}.deb",
