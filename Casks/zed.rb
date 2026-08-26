@@ -2,11 +2,11 @@ cask "zed" do
   arch arm: "aarch64", intel: "x86_64"
   os linux: "linux"
 
-  version "1.16.3"
+  version "1.17.2"
 
   on_linux do
-    sha256 arm64_linux:  "6235fc078f6087683da8a3f8b87372eba92372153ec4cd63657570667d3c014e",
-           x86_64_linux: "3e5c8c4946a843d9e3aef6d18f026691bd1dc13ff6ca5cd8c7a5d131b7945288"
+    sha256 arm64_linux:  "4f75332ab8155a5a62b0cdc473473cf8938959cf3cd2b0145e2975969d7e8929",
+           x86_64_linux: "3682dd058a305d2b246a14d64419fcf42e86a06e27755d23b5a28622ed9aef85"
 
     url "https://github.com/zed-industries/zed/releases/download/v#{version}/zed-linux-#{arch}.tar.gz",
         verified: "github.com/zed-industries/zed/"
