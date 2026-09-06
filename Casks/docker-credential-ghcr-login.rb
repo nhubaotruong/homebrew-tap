@@ -8,8 +8,7 @@ cask "docker-credential-ghcr-login" do
     sha256 arm64_linux:  "e866d63d3335cdc67b7e0ed16e2dfe84500826b13677bbd9fc42009a2c23a1d9",
            x86_64_linux: "01e7657acced71105fe22ce4394f323d2dca3a915c881d8711b67e555c57e070"
 
-    url "https://github.com/bradschwartz/docker-credential-ghcr-login/releases/download/v#{version}/docker-credential-ghcr-login_#{version}_linux_#{arch}.tar.gz",
-        verified: "github.com/bradschwartz/docker-credential-ghcr-login/"
+    url "https://github.com/bradschwartz/docker-credential-ghcr-login/releases/download/v#{version}/docker-credential-ghcr-login_#{version}_linux_#{arch}.tar.gz"
   end
 
   name "Docker Credential Helper for GHCR"

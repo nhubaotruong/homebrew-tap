@@ -20,11 +20,10 @@ cask "aws-session-manager-plugin" do
 
   binary "usr/local/sessionmanagerplugin/bin/session-manager-plugin"
 
-  preflight do
-    bsdtar = "#{formula_opt_bin("libarchive")}/bsdtar"
-    system_command bsdtar, args: ["-xf", "#{staged_path}/session-manager-plugin.deb",
-                                  "-C", staged_path.to_s]
-    system_command bsdtar, args: ["-xf", "#{staged_path}/data.tar.gz",
-                                  "-C", staged_path.to_s]
+  preflight_steps do
+    run "{{HOMEBREW_PREFIX}}/opt/libarchive/bin/bsdtar",
+        args: ["-xf", "{{staged_path}}/session-manager-plugin.deb", "-C", "{{staged_path}}"]
+    run "{{HOMEBREW_PREFIX}}/opt/libarchive/bin/bsdtar",
+        args: ["-xf", "{{staged_path}}/data.tar.gz", "-C", "{{staged_path}}"]
   end
 end

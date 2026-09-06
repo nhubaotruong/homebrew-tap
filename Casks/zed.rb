@@ -8,8 +8,7 @@ cask "zed" do
     sha256 arm64_linux:  "4f75332ab8155a5a62b0cdc473473cf8938959cf3cd2b0145e2975969d7e8929",
            x86_64_linux: "3682dd058a305d2b246a14d64419fcf42e86a06e27755d23b5a28622ed9aef85"
 
-    url "https://github.com/zed-industries/zed/releases/download/v#{version}/zed-linux-#{arch}.tar.gz",
-        verified: "github.com/zed-industries/zed/"
+    url "https://github.com/zed-industries/zed/releases/download/v#{version}/zed-linux-#{arch}.tar.gz"
   end
 
   name "Zed"
@@ -27,25 +26,23 @@ cask "zed" do
 
   binary "zed.app/bin/zed"
 
-  preflight do
-    icon_dir = "#{Dir.home}/.local/share/icons/hicolor/512x512/apps"
-    apps_dir = "#{Dir.home}/.local/share/applications"
-    FileUtils.mkdir_p apps_dir
-    FileUtils.mkdir_p icon_dir
+  preflight_steps do
+    mkdir_p ".local/share/applications", base: :home
+    mkdir_p ".local/share/icons/hicolor/512x512/apps", base: :home
 
-    FileUtils.cp "#{staged_path}/zed.app/share/icons/hicolor/512x512/apps/zed.png",
-                 "#{icon_dir}/zed.png"
+    copy "zed.app/share/icons/hicolor/512x512/apps/zed.png",
+         ".local/share/icons/hicolor/512x512/apps/zed.png", target_base: :home
 
-    File.write("#{apps_dir}/dev.zed.Zed.desktop", <<~EOS)
+    write_file ".local/share/applications/dev.zed.Zed.desktop", <<~EOS, base: :home
       [Desktop Entry]
       Version=1.0
       Type=Application
       Name=Zed
       GenericName=Text Editor
       Comment=A high-performance, multiplayer code editor.
-      TryExec=#{HOMEBREW_PREFIX}/bin/zed
+      TryExec={{HOMEBREW_PREFIX}}/bin/zed
       StartupNotify=true
-      Exec=#{HOMEBREW_PREFIX}/bin/zed %U
+      Exec={{HOMEBREW_PREFIX}}/bin/zed %U
       Icon=zed
       Categories=Utility;TextEditor;Development;IDE;
       Keywords=zed;
@@ -53,14 +50,14 @@ cask "zed" do
       Actions=NewWorkspace;
 
       [Desktop Action NewWorkspace]
-      Exec=#{HOMEBREW_PREFIX}/bin/zed --new %U
+      Exec={{HOMEBREW_PREFIX}}/bin/zed --new %U
       Name=Open a new workspace
     EOS
   end
 
-  uninstall_postflight do
-    FileUtils.rm "#{Dir.home}/.local/share/applications/dev.zed.Zed.desktop", force: true
-    FileUtils.rm "#{Dir.home}/.local/share/icons/hicolor/512x512/apps/zed.png", force: true
+  uninstall_postflight_steps do
+    remove ".local/share/applications/dev.zed.Zed.desktop", base: :home
+    remove ".local/share/icons/hicolor/512x512/apps/zed.png", base: :home
   end
 
   zap trash: [

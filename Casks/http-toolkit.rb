@@ -8,8 +8,7 @@ cask "http-toolkit" do
     sha256 arm64_linux:  "9101a7589f2a6ce849fe97811a795255868debdece004ce350954c0c39f6c1fc",
            x86_64_linux: "2776a46c2d847b1c7968ad8d6edc312de278b6216cf7e3fdf6502aad45a162d5"
 
-    url "https://github.com/httptoolkit/httptoolkit-desktop/releases/download/v#{version}/HttpToolkit-#{version}-linux-#{arch}.zip",
-        verified: "github.com/httptoolkit/httptoolkit-desktop/"
+    url "https://github.com/httptoolkit/httptoolkit-desktop/releases/download/v#{version}/HttpToolkit-#{version}-linux-#{arch}.zip"
   end
 
   name "HTTP Toolkit"
@@ -30,32 +29,36 @@ cask "http-toolkit" do
   artifact "httptoolkit.desktop",
            target: "#{Dir.home}/.local/share/applications/httptoolkit.desktop"
 
-  preflight do
+  preflight_steps do
     # Create target directories
-    FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
-    FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
+    mkdir_p ".local/share/applications", base: :home
+    mkdir_p ".local/share/icons", base: :home
 
     # Download icon to staged_path
-    system_command "#{formula_opt_bin("wget")}/wget",
-                   args: ["-qO", "#{staged_path}/httptoolkit.svg",
-                          "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"]
+    run "{{HOMEBREW_PREFIX}}/opt/wget/bin/wget",
+        args:           ["-qO", "{{staged_path}}/httptoolkit.svg",
+                         "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"],
+        network_access: true
 
-    # Create .desktop file in staged_path
-    File.write("#{staged_path}/httptoolkit.desktop", <<~EOS)
+    # Create .desktop file in staged_path. The Icon line needs the real $HOME,
+    # which the steps DSL cannot interpolate, so write it through the shell.
+    run "bash", args: ["-c", <<~DESKTOP]
+      cat > "{{staged_path}}/httptoolkit.desktop" <<EOF
       [Desktop Entry]
       Type=Application
       Name=HTTP Toolkit
       Comment=HTTP(S) debugging proxy, analyzer, and client
       GenericName=HTTP Debugger
-      Exec=#{HOMEBREW_PREFIX}/bin/httptoolkit %U
-      Icon=#{Dir.home}/.local/share/icons/httptoolkit.svg
+      Exec={{HOMEBREW_PREFIX}}/bin/httptoolkit %U
+      Icon=$HOME/.local/share/icons/httptoolkit.svg
       Terminal=false
       StartupNotify=true
       StartupWMClass=HTTP Toolkit
       Categories=Development;Network;
       MimeType=x-scheme-handler/httptoolkit;
       Keywords=httptoolkit;http;debugging;proxy;
-    EOS
+      EOF
+    DESKTOP
   end
 
   zap trash: [

@@ -8,8 +8,7 @@ cask "claude-desktop" do
            x86_64_linux: "f8a5ddea7c8cbe769589cf19c2e1832d5d532ab19bf8202621ba957c9351a2fc"
 
     claude_version = version.split("+claude")[1]
-    url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}_#{arch}.deb",
-        verified: "github.com/aaddrick/claude-desktop-debian/"
+    url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}_#{arch}.deb"
   end
 
   name "Claude Desktop"
@@ -33,42 +32,44 @@ cask "claude-desktop" do
   artifact "claude-desktop.desktop",
            target: "#{Dir.home}/.local/share/applications/claude-desktop.desktop"
 
-  preflight do
-    claude_version = version.split("+claude")[1]
+  preflight_steps do
+    # Normalise the versioned deb filename: the steps DSL cannot derive the
+    # claude version from the cask version, so rename the single staged deb.
+    move "claude-desktop_*.deb", "claude-desktop.deb", source_glob: true
 
-    system_command "#{formula_opt_bin("libarchive")}/bsdtar",
-                   args: ["-xf", "#{staged_path}/claude-desktop_#{claude_version}_#{arch}.deb",
-                          "--strip-components=0", "-C", staged_path, "data.tar.xz"]
-
-    system_command "#{formula_opt_bin("libarchive")}/bsdtar",
-                   args: ["-xf", "#{staged_path}/data.tar.xz", "-C", staged_path]
+    run "{{HOMEBREW_PREFIX}}/opt/libarchive/bin/bsdtar",
+        args: ["-xf", "{{staged_path}}/claude-desktop.deb",
+               "--strip-components=0", "-C", "{{staged_path}}", "data.tar.xz"]
+    run "{{HOMEBREW_PREFIX}}/opt/libarchive/bin/bsdtar",
+        args: ["-xf", "{{staged_path}}/data.tar.xz", "-C", "{{staged_path}}"]
 
     # Create target directories
-    FileUtils.mkdir_p "#{Dir.home}/.local/share/applications"
-    FileUtils.mkdir_p "#{Dir.home}/.local/share/icons"
+    mkdir_p ".local/share/applications", base: :home
+    mkdir_p ".local/share/icons", base: :home
 
     # Clear stale targets to avoid "Generic Artifact already exists" on upgrade
-    icon_path = "#{Dir.home}/.local/share/icons/claude-desktop.png"
-    desktop_path = "#{Dir.home}/.local/share/applications/claude-desktop.desktop"
-    FileUtils.rm(icon_path) if File.exist?(icon_path) || File.symlink?(icon_path)
-    FileUtils.rm(desktop_path) if File.exist?(desktop_path) || File.symlink?(desktop_path)
+    remove ".local/share/icons/claude-desktop.png", base: :home
+    remove ".local/share/applications/claude-desktop.desktop", base: :home
 
-    # Create .desktop file in staged_path
-    File.write("#{staged_path}/claude-desktop.desktop", <<~EOS)
+    # Create .desktop file in staged_path. The Icon line needs the real $HOME,
+    # which the steps DSL cannot interpolate, so write it through the shell.
+    run "bash", args: ["-c", <<~DESKTOP]
+      cat > "{{staged_path}}/claude-desktop.desktop" <<EOF
       [Desktop Entry]
       Type=Application
       Name=Claude Desktop
       Comment=Claude AI desktop application
       GenericName=AI Assistant
-      Exec=#{HOMEBREW_PREFIX}/bin/claude-desktop %U
-      Icon=#{Dir.home}/.local/share/icons/claude-desktop.png
+      Exec={{HOMEBREW_PREFIX}}/bin/claude-desktop %U
+      Icon=$HOME/.local/share/icons/claude-desktop.png
       Terminal=false
       StartupNotify=true
       StartupWMClass=Claude
       Categories=Office;Utility;Network;
       MimeType=x-scheme-handler/claude;
       Keywords=claude;ai;assistant;anthropic;
-    EOS
+      EOF
+    DESKTOP
   end
 
   zap trash: [
