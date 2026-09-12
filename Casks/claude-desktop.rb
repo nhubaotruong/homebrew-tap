@@ -3,9 +3,9 @@ cask "claude-desktop" do
   os linux: "linux"
 
   on_linux do
-    version "3.2.4+claude1.49585.0"
-    sha256 arm64_linux:  "8a3ae3e007c36a213a16b1b5394e3a0c836baf0cf88a08491e8202952ae27020",
-           x86_64_linux: "e0b4ce6313943a69e9bd61749a293bfca241b4dfb37f88df6411b4b69ec67a40"
+    version "3.2.4+claude1.52386.3"
+    sha256 arm64_linux:  "3396045604b019581621b07865571609dd6fcb7340a2e9328ef031685d2822fb",
+           x86_64_linux: "797594ce81c19d3f6b5373fdb801699c757016f5600715fa1751ec34e8688456"
 
     claude_version = version.split("+claude")[1]
     url "https://github.com/aaddrick/claude-desktop-debian/releases/download/v#{version.gsub("+", "%2B")}/claude-desktop_#{claude_version}_#{arch}.deb"
@@ -22,8 +22,8 @@ cask "claude-desktop" do
     end
   end
 
-  depends_on :linux
   depends_on formula: "libarchive"
+  depends_on :linux
   container type: :naked
 
   binary "usr/bin/claude-desktop"
