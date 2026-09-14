@@ -2,11 +2,11 @@ cask "http-toolkit" do
   arch arm: "arm64", intel: "x64"
   os linux: "linux"
 
-  version "1.27.1"
+  version "1.27.2"
 
   on_linux do
-    sha256 arm64_linux:  "9101a7589f2a6ce849fe97811a795255868debdece004ce350954c0c39f6c1fc",
-           x86_64_linux: "2776a46c2d847b1c7968ad8d6edc312de278b6216cf7e3fdf6502aad45a162d5"
+    sha256 arm64_linux:  "d1278556d0c72ecd972a573e394bcde5c3798c48ce70c53a8f074f0110ff4dfd",
+           x86_64_linux: "d1227b56ae09c57bd6d801e073786939779676447c5238f25643b4a3657be3db"
 
     url "https://github.com/httptoolkit/httptoolkit-desktop/releases/download/v#{version}/HttpToolkit-#{version}-linux-#{arch}.zip"
   end
@@ -20,8 +20,8 @@ cask "http-toolkit" do
     strategy :github_latest
   end
 
-  depends_on :linux
   depends_on formula: "wget"
+  depends_on :linux
 
   binary "httptoolkit"
   artifact "httptoolkit.svg",
