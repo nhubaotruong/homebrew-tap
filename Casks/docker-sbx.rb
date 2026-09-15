@@ -1,8 +1,8 @@
 cask "docker-sbx" do
   os linux: "linux"
 
-  version "0.42.1"
-  sha256 "fe46facba420d1cb8b1dad57d5b182d6df9dadd46c324c2ca3ef574fb7eada6f"
+  version "0.43.0"
+  sha256 "3eb15b8444e969aaa8d637250bef0f2bf90cb030aba0a7016a56b8e5fcdd25fe"
 
   url "https://github.com/docker/sbx-releases/releases/download/v#{version}/DockerSandboxes-linux.tar.gz"
   name "Docker Sandboxes"
@@ -14,8 +14,8 @@ cask "docker-sbx" do
     strategy :github_latest
   end
 
-  depends_on :linux
   depends_on formula: "e2fsprogs"
+  depends_on :linux
 
   binary "bin/sbx"
 
