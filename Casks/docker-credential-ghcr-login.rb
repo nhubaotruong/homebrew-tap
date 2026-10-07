@@ -20,8 +20,8 @@ cask "docker-credential-ghcr-login" do
     strategy :github_latest
   end
 
-  depends_on :linux
   depends_on formula: "gh"
+  depends_on :linux
 
   binary "docker-credential-ghcr-login"
 end

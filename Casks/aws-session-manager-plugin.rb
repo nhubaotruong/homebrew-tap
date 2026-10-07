@@ -14,8 +14,8 @@ cask "aws-session-manager-plugin" do
     regex(/(\d+\.\d+\.\d+\.\d+)/i)
   end
 
-  depends_on :linux
   depends_on formula: "libarchive"
+  depends_on :linux
   container type: :naked
 
   binary "usr/local/sessionmanagerplugin/bin/session-manager-plugin"
