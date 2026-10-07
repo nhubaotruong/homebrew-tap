@@ -25,14 +25,14 @@ cask "http-toolkit" do
 
   binary "httptoolkit"
   artifact "httptoolkit.svg",
-           target: "#{Dir.home}/.local/share/icons/httptoolkit.svg"
+           target: "#{Dir.home}/.local/share/icons/hicolor/scalable/apps/httptoolkit.svg"
   artifact "httptoolkit.desktop",
            target: "#{Dir.home}/.local/share/applications/httptoolkit.desktop"
 
   preflight_steps do
     # Create target directories
     mkdir_p ".local/share/applications", base: :home
-    mkdir_p ".local/share/icons", base: :home
+    mkdir_p ".local/share/icons/hicolor/scalable/apps", base: :home
 
     # Download icon to staged_path
     run "{{HOMEBREW_PREFIX}}/opt/wget/bin/wget",
@@ -40,8 +40,8 @@ cask "http-toolkit" do
                          "https://raw.githubusercontent.com/httptoolkit/httptoolkit-desktop/main/src/icons/icon.svg"],
         network_access: true
 
-    # Create .desktop file in staged_path. The Icon line needs the real $HOME,
-    # which the steps DSL cannot interpolate, so write it through the shell.
+    # Build the .desktop in staged_path; the artifact stanza installs it into
+    # the user's home. Icon names the hicolor theme entry, not an absolute path.
     run "bash", args: ["-c", <<~DESKTOP]
       cat > "{{staged_path}}/httptoolkit.desktop" <<EOF
       [Desktop Entry]
@@ -50,7 +50,7 @@ cask "http-toolkit" do
       Comment=HTTP(S) debugging proxy, analyzer, and client
       GenericName=HTTP Debugger
       Exec={{HOMEBREW_PREFIX}}/bin/httptoolkit %U
-      Icon=$HOME/.local/share/icons/httptoolkit.svg
+      Icon=httptoolkit
       Terminal=false
       StartupNotify=true
       StartupWMClass=HTTP Toolkit

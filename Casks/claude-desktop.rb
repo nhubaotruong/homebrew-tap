@@ -28,7 +28,7 @@ cask "claude-desktop" do
 
   binary "usr/bin/claude-desktop"
   artifact "usr/share/icons/hicolor/256x256/apps/claude-desktop.png",
-           target: "#{Dir.home}/.local/share/icons/claude-desktop.png"
+           target: "#{Dir.home}/.local/share/icons/hicolor/256x256/apps/claude-desktop.png"
   artifact "claude-desktop.desktop",
            target: "#{Dir.home}/.local/share/applications/claude-desktop.desktop"
 
@@ -45,14 +45,15 @@ cask "claude-desktop" do
 
     # Create target directories
     mkdir_p ".local/share/applications", base: :home
-    mkdir_p ".local/share/icons", base: :home
+    mkdir_p ".local/share/icons/hicolor/256x256/apps", base: :home
 
     # Clear stale targets to avoid "Generic Artifact already exists" on upgrade
     remove ".local/share/icons/claude-desktop.png", base: :home
+    remove ".local/share/icons/hicolor/256x256/apps/claude-desktop.png", base: :home
     remove ".local/share/applications/claude-desktop.desktop", base: :home
 
-    # Create .desktop file in staged_path. The Icon line needs the real $HOME,
-    # which the steps DSL cannot interpolate, so write it through the shell.
+    # Build the .desktop in staged_path; the artifact stanza installs it into
+    # the user's home. Icon names the hicolor theme entry, not an absolute path.
     run "bash", args: ["-c", <<~DESKTOP]
       cat > "{{staged_path}}/claude-desktop.desktop" <<EOF
       [Desktop Entry]
@@ -61,7 +62,7 @@ cask "claude-desktop" do
       Comment=Claude AI desktop application
       GenericName=AI Assistant
       Exec={{HOMEBREW_PREFIX}}/bin/claude-desktop %U
-      Icon=$HOME/.local/share/icons/claude-desktop.png
+      Icon=claude-desktop
       Terminal=false
       StartupNotify=true
       StartupWMClass=Claude
