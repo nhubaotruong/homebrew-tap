@@ -1,8 +1,8 @@
 cask "aws-session-manager-plugin" do
   os linux: "linux"
 
-  version "1.2.835.0"
-  sha256 "7c6dcad12518571cc7959a713e6a8ae1bdf6ed66fd9bee37dc189e39ca58ae03"
+  version "1.2.889.0"
+  sha256 "1cfd7edd0f4ce676d68967976de177bd8ee59719b90867f7f718e89652634b0b"
 
   url "https://s3.amazonaws.com/session-manager-downloads/plugin/#{version}/ubuntu_64bit/session-manager-plugin.deb"
   name "AWS Session Manager Plugin"
