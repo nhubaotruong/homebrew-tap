@@ -58,6 +58,12 @@ cask "openchamber" do
     # The deb and its payload archive are only needed to unpack the tree.
     remove "openchamber.deb"
     remove "data.tar.xz"
+
+    # A stale user icon cache hides the icon of the desktop entry.
+    run "gtk-update-icon-cache", args: ["-f", "-t", "#{Dir.home}/.local/share/icons/hicolor"],
+        writable_paths: [".local/share/icons/hicolor"], writable_base: :home, must_succeed: false
+    run "update-desktop-database", args: ["#{Dir.home}/.local/share/applications"],
+        writable_paths: [".local/share/applications"], writable_base: :home, must_succeed: false
   end
 
   uninstall_postflight_steps do
