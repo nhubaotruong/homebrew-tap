@@ -3,9 +3,9 @@ cask "openchamber" do
   os linux: "linux"
 
   on_linux do
-    version "2.5.2"
-    sha256 arm64_linux:  "4e2ea3a464a9b39e138680a7596ceda365f17a91f7d3f13270190377fdda2857",
-           x86_64_linux: "a8b1284f12c93446e572f480e1b09a597601b881634ec814d125275721d31ce8"
+    version "2.5.3"
+    sha256 arm64_linux:  "31c4292539cdc1e1eb67d571158fe82d085d7895ba92e0fb2bb1cf232d0a7536",
+           x86_64_linux: "773a216220c49435c84be75cac75b972263344e92cff2d1cce49734c1842007c"
 
     url "https://github.com/openchamber/openchamber/releases/download/v#{version}/OpenChamber-#{version}-linux-#{arch}.deb"
   end
