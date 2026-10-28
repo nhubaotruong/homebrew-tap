@@ -59,16 +59,23 @@ cask "openchamber" do
     remove "openchamber.deb"
     remove "data.tar.xz"
 
-    # A stale user icon cache hides the icon of the desktop entry.
-    run "gtk-update-icon-cache", args: ["-f", "-t", "#{Dir.home}/.local/share/icons/hicolor"],
-        writable_paths: [".local/share/icons/hicolor"], writable_base: :home, must_succeed: false
-    run "update-desktop-database", args: ["#{Dir.home}/.local/share/applications"],
-        writable_paths: [".local/share/applications"], writable_base: :home, must_succeed: false
+    # Only Homebrew manages updates; the bundled electron-updater feed would
+    # bypass it.
+    remove "opt/OpenChamber/resources/app-update.yml"
+
+    # A stale user icon cache would hide the new icon, so drop it and let GTK rescan.
+    if_path_exists ".local/share/icons/hicolor/icon-theme.cache", base: :home do
+      remove ".local/share/icons/hicolor/icon-theme.cache", base: :home
+    end
   end
 
   uninstall_postflight_steps do
     remove ".local/share/applications/openchamber.desktop", base: :home
     remove ".local/share/icons/hicolor/512x512/apps/openchamber.png", base: :home
+    # Dropping the cache makes GTK rescan, so the removed icon does not linger.
+    if_path_exists ".local/share/icons/hicolor/icon-theme.cache", base: :home do
+      remove ".local/share/icons/hicolor/icon-theme.cache", base: :home
+    end
   end
 
   zap trash: "~/.config/openchamber"
