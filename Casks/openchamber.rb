@@ -38,18 +38,15 @@ cask "openchamber" do
         args: ["-xf", "{{staged_path}}/data.tar.xz", "-C", "{{staged_path}}"]
 
     mkdir_p ".local/share/applications", base: :home
-    mkdir_p ".local/share/icons/hicolor/512x512/apps", base: :home
 
-    copy "usr/share/icons/hicolor/512x512/apps/openchamber.png",
-         ".local/share/icons/hicolor/512x512/apps/openchamber.png", target_base: :home
-
+    # The shell reads an absolute icon path as-is, so no icon theme copy is needed.
     write_file ".local/share/applications/openchamber.desktop", <<~EOS, base: :home
       [Desktop Entry]
       Name=OpenChamber
       Exec={{HOMEBREW_PREFIX}}/bin/openchamber-desktop %U
       Terminal=false
       Type=Application
-      Icon=openchamber
+      Icon={{staged_path}}/usr/share/icons/hicolor/512x512/apps/openchamber.png
       StartupWMClass=openchamber
       Comment=Electron desktop runtime for OpenChamber
       Categories=Development;
@@ -62,20 +59,10 @@ cask "openchamber" do
     # Only Homebrew manages updates; the bundled electron-updater feed would
     # bypass it.
     remove "opt/OpenChamber/resources/app-update.yml"
-
-    # A stale user icon cache would hide the new icon, so drop it and let GTK rescan.
-    if_path_exists ".local/share/icons/hicolor/icon-theme.cache", base: :home do
-      remove ".local/share/icons/hicolor/icon-theme.cache", base: :home
-    end
   end
 
   uninstall_postflight_steps do
     remove ".local/share/applications/openchamber.desktop", base: :home
-    remove ".local/share/icons/hicolor/512x512/apps/openchamber.png", base: :home
-    # Dropping the cache makes GTK rescan, so the removed icon does not linger.
-    if_path_exists ".local/share/icons/hicolor/icon-theme.cache", base: :home do
-      remove ".local/share/icons/hicolor/icon-theme.cache", base: :home
-    end
   end
 
   zap trash: "~/.config/openchamber"

@@ -36,18 +36,15 @@ cask "orca" do
         args: ["-xf", "{{staged_path}}/data.tar.xz", "-C", "{{staged_path}}"]
 
     mkdir_p ".local/share/applications", base: :home
-    mkdir_p ".local/share/icons/hicolor/512x512/apps", base: :home
 
-    copy "usr/share/icons/hicolor/512x512/apps/orca-ide.png",
-         ".local/share/icons/hicolor/512x512/apps/orca-ide.png", target_base: :home
-
+    # The shell reads an absolute icon path as-is, so no icon theme copy is needed.
     write_file ".local/share/applications/orca-ide.desktop", <<~EOS, base: :home
       [Desktop Entry]
       Name=Orca
       Exec={{HOMEBREW_PREFIX}}/bin/orca-ide %U
       Terminal=false
       Type=Application
-      Icon=orca-ide
+      Icon={{staged_path}}/usr/share/icons/hicolor/512x512/apps/orca-ide.png
       StartupWMClass=orca
       Comment=Next-gen IDE for parallel agentic development
       MimeType=text/markdown;text/csv;text/tab-separated-values;x-scheme-handler/orca;
@@ -61,20 +58,10 @@ cask "orca" do
     # Only Homebrew manages updates; the bundled electron-updater feed would
     # bypass it.
     remove "opt/Orca/resources/app-update.yml"
-
-    # A stale user icon cache would hide the new icon, so drop it and let GTK rescan.
-    if_path_exists ".local/share/icons/hicolor/icon-theme.cache", base: :home do
-      remove ".local/share/icons/hicolor/icon-theme.cache", base: :home
-    end
   end
 
   uninstall_postflight_steps do
     remove ".local/share/applications/orca-ide.desktop", base: :home
-    remove ".local/share/icons/hicolor/512x512/apps/orca-ide.png", base: :home
-    # Dropping the cache makes GTK rescan, so the removed icon does not linger.
-    if_path_exists ".local/share/icons/hicolor/icon-theme.cache", base: :home do
-      remove ".local/share/icons/hicolor/icon-theme.cache", base: :home
-    end
   end
 
   zap trash: "~/.config/orca"
