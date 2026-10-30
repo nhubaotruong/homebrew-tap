@@ -38,10 +38,13 @@ cask "orca" do
     mkdir_p ".local/share/applications", base: :home
 
     # The shell reads an absolute icon path as-is, so no icon theme copy is needed.
+    # The Wayland Ozone backend rejects Vulkan, so the desktop entry disables the
+    # Vulkan feature instead of falling back to X11. Only the desktop launch gets
+    # the flag; the orca-ide binary stays untouched.
     write_file ".local/share/applications/orca-ide.desktop", <<~EOS, base: :home
       [Desktop Entry]
       Name=Orca
-      Exec={{HOMEBREW_PREFIX}}/bin/orca-ide %U
+      Exec={{HOMEBREW_PREFIX}}/bin/orca-ide --disable-features=Vulkan %U
       Terminal=false
       Type=Application
       Icon={{staged_path}}/usr/share/icons/hicolor/512x512/apps/orca-ide.png
