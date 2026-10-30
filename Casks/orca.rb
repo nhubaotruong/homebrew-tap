@@ -45,7 +45,7 @@ cask "orca" do
       Terminal=false
       Type=Application
       Icon={{staged_path}}/usr/share/icons/hicolor/512x512/apps/orca-ide.png
-      StartupWMClass=orca
+      StartupWMClass=orca-ide
       Comment=Next-gen IDE for parallel agentic development
       MimeType=text/markdown;text/csv;text/tab-separated-values;x-scheme-handler/orca;
       Categories=Utility;
