@@ -3,9 +3,9 @@ cask "orca" do
   os linux: "linux"
 
   on_linux do
-    version "1.4.245"
-    sha256 arm64_linux:  "9dd7cd390f5e1169e6f4a5234a829e732a3b3130302bf5066dbdcc96bf3d2f8d",
-           x86_64_linux: "54420e22d49dda9df66ed4e943b62844c955d4fd9d5c1059bf8f7702b760bc89"
+    version "1.4.246"
+    sha256 arm64_linux:  "faa9613b9fb851e502340f510d693ace7b6877545c1ce1e3d52dd15ded00977d",
+           x86_64_linux: "e8706feb390a34bbcf9a408cb465de7a47d721480f921ec2b56cf18eaf88b7cf"
 
     url "https://github.com/stablyai/orca/releases/download/v#{version}/orca-ide_#{version}_#{arch}.deb"
   end
