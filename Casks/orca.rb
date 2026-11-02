@@ -23,6 +23,9 @@ cask "orca" do
 
   depends_on :linux
 
+  # Keep the name orca: the CLI's own skill guides tell agents to run `orca`.
+  # /usr/bin/orca is the GNOME screen reader, so callers that cannot rely on
+  # this link's PATH priority must use the absolute path.
   binary "orca"
 
   preflight_steps do
