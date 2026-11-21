@@ -1,9 +1,9 @@
 cask "orca" do
   on_linux do
     appimage = on_arch_conditional arm: "orca-linux-arm64.AppImage", intel: "orca-linux.AppImage"
-    version "1.4.267"
-    sha256 arm64_linux:  "8a8a3e6857cdbc35e8d91beec4c7af813e403f3506e42b681f833d0504bb6fe8",
-           x86_64_linux: "e5043fee688d9e66344d2a66be809a221cb5308a380032c7cc932a49d5a2fd39"
+    version "1.4.268"
+    sha256 arm64_linux:  "90391d5aecb0b22d79aa662deb6d47ce2bcbb16b3f0e2925586e07f0b11e7203",
+           x86_64_linux: "2133ba4684578b2e05210bf30f86e8caf1faa1794304501e279ecb230caa3efe"
 
     url "https://github.com/stablyai/orca/releases/download/v#{version}/#{appimage}"
 
