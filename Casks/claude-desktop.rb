@@ -3,7 +3,7 @@ cask "claude-desktop" do
   os linux: "linux"
 
   on_linux do
-    version "3.3.20+claude6.28899.6"
+    version "3.3.21+claude6.28899.6"
     sha256 arm64_linux:  "239c20d218456cacc656d48382fd59116325ac679aa4e476377af1456ac85715",
            x86_64_linux: "7e381601d86570149643d52e9b89c26575ab12fa788aa41ffdd4cca5b0638cf8"
 
